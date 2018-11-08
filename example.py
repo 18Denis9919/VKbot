@@ -198,7 +198,7 @@ def delete_user(message, vk):
 
 
 if __name__ == '__main__':
-	bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')
+	bot = VKBot(token='')
 	user_id = bot.get_user_id()
 	while True:
 		req = cur.execute("""SELECT vk_id FROM users WHERE vk_id = (%s)""", str(user_id))
@@ -235,44 +235,3 @@ if __name__ == '__main__':
 	conn.close()
 
 
-# bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')
-
-# for event in bot.long_poll.listen():
-
-#     if event.type == VkEventType.MESSAGE_NEW:
-#         print('Новое сообщение:')
-
-#         if event.from_me:
-#             print('От меня для: ', end='')
-#         elif event.to_me:
-#             print('Для меня от: ', end='')
-
-#         if event.from_user:
-#             print(event.user_id)
-#         elif event.from_chat:
-#             print(event.user_id, 'в беседе', event.chat_id)
-#         elif event.from_group:
-#             print('группы', event.group_id)
-
-#         print('Текст: ', event.text)
-#         print()
-
-#     elif event.type == VkEventType.USER_TYPING:
-#         print('Печатает ', end='')
-
-#         if event.from_user:
-#             print(event.user_id)
-#         elif event.from_group:
-#             print('администратор группы', event.group_id)
-
-#     elif event.type == VkEventType.USER_TYPING_IN_CHAT:
-#         print('Печатает ', event.user_id, 'в беседе', event.chat_id)
-
-#     elif event.type == VkEventType.USER_ONLINE:
-#         print('Пользователь', event.user_id, 'онлайн', event.platform)
-
-#     elif event.type == VkEventType.USER_OFFLINE:
-#         print('Пользователь', event.user_id, 'оффлайн', event.offline_type)
-
-#     else:
-#         print(event.type, event.raw[1:])
