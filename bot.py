@@ -120,10 +120,6 @@ class VKBot:
                 return 1
             # if handler.__name__=='test':
             #         return 1
-                
-            # if command in message_set:
-            #     handler(self.event, self.vk)
-            #     return 1
 
     def __query_manager__(self, queryset):
         """
