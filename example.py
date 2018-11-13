@@ -216,7 +216,7 @@ if __name__ == '__main__':
 	bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')
 	
 	while True:
-		user_id = bot.get_user_id()
+		user_id = bot.vk_id
 		cur.execute("""SELECT vk_id, group_id FROM users WHERE vk_id = '{0}'""".format(str(user_id)))
 		user_id_db = 0
 		for el in cur:
