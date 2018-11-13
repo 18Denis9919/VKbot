@@ -15,7 +15,6 @@ class VKBot:
     upload = 0
     long_poll = 0
     event = 0
-    vk_id = 0
 
     def __init__(self, log=None, passwd=None, token=None):
         """
@@ -149,6 +148,6 @@ class VKBot:
     def get_user_id(self):
         for event in self.long_poll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-                self.vk_id = event.user_id
-                break
+                return event.user_id
+                
 
