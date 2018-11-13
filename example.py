@@ -172,18 +172,19 @@ def test(message, vk, correct_mes=''):
 	vk.messages.send(user_id=message.user_id, message=correct_mes + u"Работает")
 
 def hello(message, vk, correct_mes=''):
-	vk.messages.send(user_id=message.user_id, message=correct_mes + u'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n БББО-01-17\nБББО-02-17 ')
+	vk.messages.send(user_id=message.user_id, message=correct_mes + u'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n БББО-01-17 \nБББО-02-17 ')
 
 def list_comand(message, vk, correct_mes=''):
 	list_message = '''Вот что я умею:
 		-Выводить расписание на определенный день недели
-		-Выводить расписание на сегодня и завтра
+		-Выводить расписание на сегодня 
+		-Выводить расписание на завтра
 		-Выводить расписание на всю неделю
 		-Выводить номер недели
 		-Выводить список преподавателей
 		________________________________________________
 
-		Для того чтобы посмотореть расписание другой группы напиши мне "Сменить" и затем введи нужную тебе группу!
+		Для того чтобы посмотореть расписание другой группы напиши мне "Сменить"!
 
 	'''
 	vk.messages.send(user_id=message.user_id, message=correct_mes + list_message)
@@ -192,7 +193,7 @@ def start(message, vk, correct_mes=''):
 	vk_id = message.user_id
 	group = message.text
 	try:
-		cur.execute(u"""INSERT INTO users (vk_id, group_id) VALUES ('{0}', '{1}') ON CONFLICT DO NOTHING""".format(str(vk_id), group))
+		cur.execute(u"""INSERT INTO users (vk_id, group_id) VALUES ('{0}', '{1}') ON CONFLICT (vk_id) DO NOTHING""".format(str(vk_id), group))
 		conn.commit()
 		vk.messages.send(user_id=message.user_id, message=correct_mes + u'Я добавил тебя в базу, можешь приступать к работе!')
 		list_comand(message, vk)
