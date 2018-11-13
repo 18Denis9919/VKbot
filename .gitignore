@@ -8,8 +8,6 @@ node_modules/
 tcl/
 *.xlsx
 
-*.json
-*.js
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
