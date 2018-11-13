@@ -15,6 +15,7 @@ class VKBot:
     upload = 0
     long_poll = 0
     event = 0
+    vk_id = 0
 
     def __init__(self, log=None, passwd=None, token=None):
         """
@@ -128,7 +129,6 @@ class VKBot:
         :param queryset: list of commands and hanlers. For example [["command", handler], ...]
         """
         for item in queryset:
-            print(item[1].__name__ )
             if (self.__command_handler__(item[0], item[1])) == 1:
                 return 1
 
@@ -149,5 +149,6 @@ class VKBot:
     def get_user_id(self):
         for event in self.long_poll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-                return event.user_id
+                self.vk_id = event.user_id
+                break
 

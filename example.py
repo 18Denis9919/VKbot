@@ -1,11 +1,18 @@
+## -*- coding: utf-8 -*-
 from bot import VKBot
 from random import randint
 from importlib import reload
 import pymysql
 import datetime
 import re
-
-conn = pymysql.connect(host='127.0.0.1', port=3307, user='root', passwd='denis', db='timetable')
+import postgresql
+import psycopg2
+import psycopg2.extensions
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
+# conn = pymysql.connect(host='127.0.0.1', port=3307, user='root', passwd='denis', db='timetable')
+# cur = conn.cursor()
+conn = psycopg2.connect("host='ec2-50-19-127-158.compute-1.amazonaws.com' dbname='da3vvps6qv9fpc' user='cgbvbzntdxveul' password='f5fdf70c6d5fe8fed9dc9e0ff1430ea6e99f18ef27896797401db2f6b5f7f47e'")
 cur = conn.cursor()
 
 lecture_phisic = [1, 5, 9, 13]
@@ -13,7 +20,7 @@ laba_phisic = [2, 6, 10, 14]
 
 
 def get_group(vk_id):
-	req = cur.execute("""SELECT * FROM users WHERE vk_id = (%s)""", str(vk_id))	
+	req = cur.execute("""SELECT * FROM users WHERE vk_id = '{0}'""".format(str(vk_id)))
 	for el in cur:
 		group = el[2]
 	return group
@@ -26,10 +33,13 @@ def get_week(data):
 	return week
 
 
-def create_message(request):
+def create_message(request, data):
 	mes = ''
-	for row in cur:
-		mes = mes + str(row[0])+' пара ('+ str(row[1]) + ', с ' + str(row[2]) + ' до ' + str(row[3]) + '): \n' + str(row[4]) + ', ' + str(row[5])+'\n\n'
+	for row in request:
+		if str(get_week(data)) in row[4]:
+			mes = mes + str(row[0])+' пара ('+ str(row[1]) + ', с ' + str(row[2]) + ' до ' + str(row[3]) + '): \n' + str(row[4]) + ', ' + str(row[5])+'\n\n'
+		elif not bool(re.search(r'\d', row[4])):
+			mes = mes + str(row[0])+' пара ('+ str(row[1]) + ', с ' + str(row[2]) + ' до ' + str(row[3]) + '): \n' + str(row[4]) + ', ' + str(row[5])+'\n\n'
 	
 	if mes=='':
 		mes = 'Занятий нет.\n\n'
@@ -39,58 +49,53 @@ def create_message(request):
 
 def monday(data, vk_id, mes_date=''):
 	if get_week(data)%2!=0:
-		req = cur.execute("""SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ПОНЕДЕЛЬНИК' AND Subject IS NOT NULL AND WEEK = 'I' AND Group_ID = %s""", get_group(vk_id))
+		cur.execute("""SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ПОНЕДЕЛЬНИК' AND Subject IS NOT NULL AND WEEK = 'I' AND Group_ID = '{0}'""".format(get_group(vk_id)))
+		# cur.execute(u"""SELECT Class FROM time_table WHERE Group_ID != '????-02-17'""")
 	else:
-		req = cur.execute("""SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ПОНЕДЕЛЬНИК' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = %s""", get_group(vk_id))
-	message = 'Пары на понедельник ' + mes_date + ':\n\n' + create_message(req)	
+		cur.execute("""SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ПОНЕДЕЛЬНИК' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = '{0}'""".format(get_group(vk_id)))
+	message = 'Пары на понедельник ' + mes_date + ':\n\n' + create_message(cur, data)	
 	return message
 
 
 
 def tuesday(data, vk_id, mes_date=''):
 	if get_week(data)%2!=0:
-		req = cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ВТОРНИК' AND Subject IS NOT NULL AND WEEK = 'I' AND Group_ID = %s", get_group(vk_id))
+		cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ВТОРНИК' AND Subject IS NOT NULL AND WEEK = 'I' AND Group_ID = '{0}'".format(get_group(vk_id)))
 	else:
-		req = cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ВТОРНИК' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = %s", get_group(vk_id))
-	message = 'Пары на вторник ' + mes_date + ':\n\n' + create_message(req)	
+		cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ВТОРНИК' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = '{0}'".format(get_group(vk_id)))
+	message = 'Пары на вторник ' + mes_date + ':\n\n' + create_message(cur, data)	
 	return message
 
 def wednesday(data, vk_id, mes_date=''):
 	if get_week(data)%2!=0:
-		req = cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='СРЕДА' AND Subject IS NOT NULL AND WEEK = 'I' AND Group_ID = %s", get_group(vk_id))
+		cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='СРЕДА' AND Subject IS NOT NULL AND WEEK = 'I' AND Group_ID = '{0}'".format(get_group(vk_id)))
 	else:
-		req = cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='СРЕДА' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = %s", get_group(vk_id))
-	message = 'Пары на среду ' + mes_date + ':\n\n' + create_message(req)	
+		cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='СРЕДА' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = '{0}'".format(get_group(vk_id)))
+	message = 'Пары на среду ' + mes_date + ':\n\n' + create_message(cur, data)	
 	return message	
 
 def thursday(data, vk_id, mes_date=''):
 	if get_week(data)%2!=0:
-		req = cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ЧЕТВЕРГ' AND Subject IS NOT NULL AND WEEK = 'I' AND Group_ID = %s", get_group(vk_id))
+		cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ЧЕТВЕРГ' AND Subject IS NOT NULL AND WEEK = 'I' AND Group_ID = '{0}'".format(get_group(vk_id)))
 	else:
-		req = cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ЧЕТВЕРГ' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = %s", get_group(vk_id))
-	message = 'Пары на четверг ' + mes_date + ':\n\n' + create_message(req)	
+		cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ЧЕТВЕРГ' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = '{0}'".format(get_group(vk_id)))
+	message = 'Пары на четверг ' + mes_date + ':\n\n' + create_message(cur, data)	
 	return message
 
 def friday(data, vk_id, mes_date=''):
 	if get_week(data)%2!=0:
-		req = cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ПЯТНИЦА' AND Subject IS NOT NULL AND WEEK = 'I' AND Group_ID = %s", get_group(vk_id))
+		cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ПЯТНИЦА' AND Subject IS NOT NULL AND WEEK = 'I' AND Group_ID = '{0}'".format(get_group(vk_id)))
 	else:
-		req = cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ПЯТНИЦА' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = %s", get_group(vk_id))
-	message = 'Пары на пятницу ' + mes_date + ':\n\n' + create_message(req)	
+		cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ПЯТНИЦА' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = '{0}'".format(get_group(vk_id)))
+	message = 'Пары на пятницу ' + mes_date + ':\n\n' + create_message(cur, data)	
 	return message
 
 def saturday(data, vk_id, mes_date=''):
 	if get_week(data)%2!=0:
-		if get_week(data) in lecture_phisic:
-			req = cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='СУББОТА' AND Subject IS NOT NULL AND WEEK = 'I' AND Group_ID = %s", get_group(vk_id))
-		else:
-			req = []
+		cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='СУББОТА' AND Subject IS NOT NULL AND WEEK = 'I' AND Group_ID = '{0}'".format(get_group(vk_id)))
 	else:
-		if get_week(data) not in laba_phisic:
-			req = cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='СУББОТА' AND Subject IS NOT NULL AND WEEK = 'II' AND Type_lesson = 'пр' AND Group_ID = %s", get_group(vk_id))
-		else:
-			req = cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='СУББОТА' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = %s", get_group(vk_id))
-	message = 'Пары на субботу ' + mes_date + ':\n\n' + create_message(req)	
+		cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='СУББОТА' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = '{0}'".format(get_group(vk_id)))
+	message = 'Пары на субботу ' + mes_date + ':\n\n' + create_message(cur, data)	
 	return message
 
 def send_monday(message, vk, correct_mes=''):
@@ -144,7 +149,7 @@ def tomorow(message, vk, correct_mes=''):
 
 def for_week(message, vk, correct_mes=''):
 	data = datetime.datetime.today()
-	mes_week = '_________________________\n\n'
+	mes_week = 'Пары на неделю:\n_________________________\n\n'
 	for i in range(7):
 		mes_date = '(' + str(data.day) + '.' + str(data.month) + ')'
 		if get_weekday(data, mes_date, message.user_id)!='В воскресенье выходной день!':
@@ -157,7 +162,7 @@ def week(message, vk, correct_mes=''):
 	vk.messages.send(user_id=message.user_id, message=correct_mes + 'Сейчас ' + str(get_week(datetime.datetime.utcnow())) + ' неделя.')
 
 def teachers(message, vk, correct_mes=''):
-	req = cur.execute("SELECT DISTINCT Teachers FROM time_table WHERE Group_ID = %s AND Teachers IS NOT NULL", get_group(message.user_id))
+	req = cur.execute("SELECT DISTINCT Teachers FROM time_table WHERE Group_ID = '{0}' AND Teachers IS NOT NULL".format(get_group(message.user_id)))
 	teacher_list = ''
 	for row in cur:
 		teacher_list += row[0] + '\n'
@@ -171,12 +176,12 @@ def hello(message, vk, correct_mes=''):
 
 def list_comand(message, vk, correct_mes=''):
 	list_message = '''Вот что я умею:
-		Выводить расписание на определенный день недели
-		Выводить расписание на сегодня и завтра
-		Выводить расписание на всю неделю
-		Выводить номер недели
-		Выводить список преподавателей
-		__________________________________
+		-Выводить расписание на определенный день недели
+		-Выводить расписание на сегодня и завтра
+		-Выводить расписание на всю неделю
+		-Выводить номер недели
+		-Выводить список преподавателей
+		________________________________________________
 
 		Для того чтобы посмотореть расписание другой группы напиши мне "Сменить" и затем введи нужную тебе группу!
 
@@ -187,7 +192,7 @@ def start(message, vk, correct_mes=''):
 	vk_id = message.user_id
 	group = message.text
 	try:
-		cur.execute("""INSERT INTO users VALUES (NULL, %s, %s)""", ( vk_id, group))
+		cur.execute(u"""INSERT INTO users (vk_id, group_id) VALUES ('{0}', '{1}') ON CONFLICT DO NOTHING""".format(str(vk_id), group))
 		conn.commit()
 		vk.messages.send(user_id=message.user_id, message=correct_mes + u'Я добавил тебя в базу, можешь приступать к работе!')
 		list_comand(message, vk)
@@ -199,7 +204,7 @@ def start(message, vk, correct_mes=''):
 def delete_user(message, vk, correct_mes=''):
 	vk_id = message.user_id
 	try:
-		cur.execute("""DELETE FROM users WHERE vk_id = (%s)""", str(message.user_id))
+		cur.execute("""DELETE FROM users WHERE vk_id = '{0}'""".format(str(message.user_id)))
 		conn.commit()
 		vk.messages.send(user_id=message.user_id, message=correct_mes + u'Смена группы произошла успешно!')
 		hello(message, vk)
@@ -209,14 +214,15 @@ def delete_user(message, vk, correct_mes=''):
 
 if __name__ == '__main__':
 	bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')
-	user_id = bot.get_user_id()
+	bot.get_user_id()
+	user_id = bot.vk_id
 	while True:
-		req = cur.execute("""SELECT vk_id FROM users WHERE vk_id = (%s)""", str(user_id))
-		if req==1:
-			for el in cur:
-				user_id_db = el[0]
-		else:
-			user_id_db = 0		
+		# user_id = bot.vk_id
+		cur.execute("""SELECT vk_id, group_id FROM users WHERE vk_id = '{0}'""".format(str(user_id)))
+
+		user_id_db = 1
+		for el in cur:
+			user_id_db = el[0]	
 		if int(user_id_db) == user_id:
 			queryset = [
 			[[u"Понедельник", "пн","понедельник",], send_monday],
@@ -245,3 +251,4 @@ if __name__ == '__main__':
 	conn.close()
 
 
+# 5432
