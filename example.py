@@ -212,6 +212,9 @@ def delete_user(message, vk, correct_mes=''):
 		conn.rollback()
 		vk.messages.send(user_id=message.user_id, message=correct_mes + u'Упс, что то пошло не так!')
 
+# def test(message, vk):
+# 	pass
+
 if __name__ == '__main__':
 	bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')
 	
@@ -243,6 +246,7 @@ if __name__ == '__main__':
 			queryset = [
 			[[u'Привет',], hello],
 			[[u'БББО-02-17', 'БББО-01-17'], start]
+			# [[u'sosi'], test]
 			]
 		bot.run(query=queryset)
 	cur.close()

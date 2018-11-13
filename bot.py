@@ -106,7 +106,7 @@ class VKBot:
             for message in message_set:
                 if handler.__name__=='on_date' and self.get_data_from_message(message_set)!=False:
                     handler(self.event, self.vk, self.get_data_from_message(message_set))
-                    return 1      
+                    return 1 
                 distance = len(message)
                 d = self.damerau_levenshtein_distance(message, command)
                 if d < distance:
@@ -118,6 +118,8 @@ class VKBot:
             if distance < len(message)*0.4 and message not in ["Неделя", "неделя", "нед"]:
                 handler(self.event, self.vk)
                 return 1
+            # if handler.__name__=='test':
+            #         return 1
                 
             # if command in message_set:
             #     handler(self.event, self.vk)
