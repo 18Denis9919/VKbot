@@ -33,7 +33,7 @@ def get_week(data):
 def create_message(request, data):
 	mes = ''
 	for row in request:
-		if (str(get_week(data)) in row[4]) and ('кр.' in row[4]) or (not bool(re.search(r'\d', row[4]))):
+		if (str(get_week(data)) in row[4]) and ('кр.' not in row[4]) or (not bool(re.search(r'\d', row[4]))):
 			mes = mes + str(row[0])+' пара ('+ str(row[1]) + ', с ' + str(row[2]) + ' до ' + str(row[3]) + '): \n' + str(row[4]) + ', ' + str(row[5])+'\n\n'
 	
 	if mes=='':
