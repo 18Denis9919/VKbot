@@ -230,7 +230,7 @@ def delete_user(message, vk):
 
 def start(message, vk):
 	vk_id = message.user_id
-	group = message.text
+	group = message.text.upper()
 	if get_group(vk_id)==0:
 		try:
 			cur.execute(u"""INSERT INTO users (vk_id, group_id) VALUES ('{0}', '{1}') ON CONFLICT DO NOTHING""".format(str(vk_id), group))
