@@ -15,7 +15,6 @@ class VKBot:
     upload = 0
     long_poll = 0
     event = 0
-    vk_id = 1
 
     def __init__(self, log=None, passwd=None, token=None):
         """
@@ -139,7 +138,6 @@ class VKBot:
         for event in self.long_poll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
                 self.event = event
-                self.vk_id = event.user_id
                 if (self.__query_manager__(query))==1:
                     break
                 else:

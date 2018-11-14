@@ -1,1 +1,1 @@
-worker: python3 example.py
+worker: python3 new_bot.py
