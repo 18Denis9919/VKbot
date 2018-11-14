@@ -107,7 +107,7 @@ class VKBot:
                     handler(self.event, self.vk, self.get_data_from_message(message_set))
                     return 1 
                 distance = len(message)
-                d = self.damerau_levenshtein_distance(message, command)
+                d = self.damerau_levenshtein_distance(message.lower(), command)
                 if d < distance:
                     distance = d
                     key = command
