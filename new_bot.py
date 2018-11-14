@@ -52,7 +52,7 @@ def monday(data, vk_id, mes_date=''):
 			cur.execute("""SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ПОНЕДЕЛЬНИК' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = '{0}'""".format(get_group(vk_id)))
 		message = 'Пары на понедельник ' + mes_date + ':\n\n' + create_message(cur, data)
 	else:
-		message = 'Тебя нет в базе!'	
+		message = 'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n-БББО-01-17 \n-БББО-02-17'	
 	return message
 
 
@@ -65,7 +65,7 @@ def tuesday(data, vk_id, mes_date=''):
 			cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ВТОРНИК' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = '{0}'".format(get_group(vk_id)))
 		message = 'Пары на вторник ' + mes_date + ':\n\n' + create_message(cur, data)	
 	else:
-		message = 'Тебя нет в базе!'	
+		message = 'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n-БББО-01-17 \n-БББО-02-17'	
 	return message
 
 def wednesday(data, vk_id, mes_date=''):
@@ -76,7 +76,7 @@ def wednesday(data, vk_id, mes_date=''):
 			cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='СРЕДА' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = '{0}'".format(get_group(vk_id)))
 		message = 'Пары на среду ' + mes_date + ':\n\n' + create_message(cur, data)	
 	else:
-		message = 'Тебя нет в базе!'	
+		message = 'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n-БББО-01-17 \n-БББО-02-17'	
 	return message	
 
 def thursday(data, vk_id, mes_date=''):
@@ -87,7 +87,7 @@ def thursday(data, vk_id, mes_date=''):
 			cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ЧЕТВЕРГ' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = '{0}'".format(get_group(vk_id)))
 		message = 'Пары на четверг ' + mes_date + ':\n\n' + create_message(cur, data)	
 	else:
-		message = 'Тебя нет в базе!'	
+		message = 'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n-БББО-01-17 \n-БББО-02-17'	
 	return message
 
 def friday(data, vk_id, mes_date=''):
@@ -98,7 +98,7 @@ def friday(data, vk_id, mes_date=''):
 			cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='ПЯТНИЦА' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = '{0}'".format(get_group(vk_id)))
 		message = 'Пары на пятницу ' + mes_date + ':\n\n' + create_message(cur, data)	
 	else:
-		message = 'Тебя нет в базе!'	
+		message = 'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n-БББО-01-17 \n-БББО-02-17'	
 	return message
 
 def saturday(data, vk_id, mes_date=''):
@@ -109,7 +109,7 @@ def saturday(data, vk_id, mes_date=''):
 			cur.execute("SELECT Number_lesson, Class, Start_lesson, End_lesson, Subject, Type_lesson  FROM time_table WHERE Day_of_week='СУББОТА' AND Subject IS NOT NULL AND WEEK = 'II' AND Group_ID = '{0}'".format(get_group(vk_id)))
 		message = 'Пары на субботу ' + mes_date + ':\n\n' + create_message(cur, data)	
 	else:
-		message = 'Тебя нет в базе!'	
+		message = 'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n-БББО-01-17 \n-БББО-02-17'	
 	return message
 
 def send_monday(message, vk):
@@ -171,7 +171,7 @@ def for_week(message, vk):
 				mes_week += get_weekday(data, mes_date, message.user_id)  + '_________________________\n\n'
 			data = data + datetime.timedelta(days=1) 
 	else:
-		mes_date = 'Тебя нет в базе!'
+		mes_date = 'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n-БББО-01-17 \n-БББО-02-17'
 	vk.messages.send(user_id=message.user_id, message=mes_week)
 
 
@@ -179,7 +179,7 @@ def week(message, vk):
 	if get_group(message.user_id)!=0:
 		num_week = str(get_week(datetime.datetime.utcnow()))
 	else:
-		num_week = 'Тебя нет в базе!'
+		num_week = 'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n-БББО-01-17 \n-БББО-02-17'
 	vk.messages.send(user_id=message.user_id, message='Сейчас ' + num_week + ' неделя.')
 
 def teachers(message, vk):
@@ -189,7 +189,7 @@ def teachers(message, vk):
 		for row in cur:
 			teacher_list += row[0] + '\n'
 	else:
-		teacher_list = 'Тебя нет в базе!'
+		teacher_list = 'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n-БББО-01-17 \n-БББО-02-17'
 	vk.messages.send(user_id=message.user_id, message=teacher_list)
 
 
@@ -197,19 +197,19 @@ def teachers(message, vk):
 def list_comand(message, vk):
 	if get_group(message.user_id)!=0:
 		list_message = '''Вот что я умею:
-			-Выводить расписание на определенный день недели
-			-Выводить расписание на сегодня 
-			-Выводить расписание на завтра
-			-Выводить расписание на всю неделю
-			-Выводить номер недели
-			-Выводить список преподавателей
+			- Выводить расписание на определенный день недели
+			- Выводить расписание на сегодня 
+			- Выводить расписание на завтра
+			- Выводить расписание на всю неделю
+			- Выводить расписание на определенную дату
+			- Выводить номер недели
+			- Выводить список преподавателей
 			________________________________________________
 
 			Для того чтобы посмотореть расписание другой группы напиши мне "Сменить"!
-
 		'''
 	else:
-		list_message = 'Тебя нет в базе!'
+		list_message = 'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n-БББО-01-17 \n-БББО-02-17'
 	vk.messages.send(user_id=message.user_id, message=list_message)
 
 def delete_user(message, vk):
@@ -224,7 +224,7 @@ def delete_user(message, vk):
 			conn.rollback()
 			vk.messages.send(user_id=message.user_id, message=u'Упс, что то пошло не так!')
 	else:
-		vk.messages.send(user_id=message.user_id, message=u'Тебя нет в базе!')
+		vk.messages.send(user_id=message.user_id, message=u'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n-БББО-01-17 \n-БББО-02-17')
 
 
 
@@ -241,18 +241,17 @@ def start(message, vk):
 			conn.rollback()
 			vk.messages.send(user_id=message.user_id, message=u'Упс, что то пошло не так!')
 	else:
-		vk.messages.send(user_id=message.user_id, message=u'Ты уже есть в базе!')
+		vk.messages.send(user_id=message.user_id, message=u'Ты уже есть в базе! Твоя группа: {0}'.format(get_group(vk_id)))
 
 def hello(message, vk):
 	if get_group(message.user_id)==0:
-		vk.messages.send(user_id=message.user_id, message=u'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n БББО-01-17 \nБББО-02-17 ')
+		vk.messages.send(user_id=message.user_id, message=u'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\n-БББО-01-17 \n-БББО-02-17 ')
 	else:
 		vk.messages.send(user_id=message.user_id, message=u'Ну привет, чувак из {0}'.format(get_group(message.user_id)))
 
 
 if __name__ == '__main__':
-	bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')
-	
+	bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')	
 	while True:
 		queryset = [
 		[[u"Понедельник", "пн","понедельник",], send_monday],

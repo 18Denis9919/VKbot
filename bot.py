@@ -64,7 +64,7 @@ class VKBot:
 
     def unknow_message(self, message, vk):
         vk.messages.send(user_id=message.user_id, message=u"""
-                Кажется, сообщение с ошибками или не относится к расписанию.
+                Кажется, сообщение с ошибками или не относится к расписанию (команда 'Инфо' выведет список моих возможностей).
                 """)
 
     def get_data_from_message(self, messages_with_date):
