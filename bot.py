@@ -114,7 +114,7 @@ class VKBot:
                     if distance == 0:
                         handler(self.event, self.vk)
                         return 1
-            if distance < len(message)*0.4 and message.lower() not in ["неделя", "нед"]:
+            if distance < len(message)*0.4 and message.lower() not in ["неделя", "нед", 'бббо-02-17', 'бббо-01-17']:
                 handler(self.event, self.vk)
                 return 1
             # if handler.__name__=='test':
