@@ -269,7 +269,7 @@ if __name__ == '__main__':
 		[[u"info","Инфо","инфо","команды", "Комнады"], list_comand],
 		[['1'], on_date],
 		[[u'Привет',], hello],
-		[[u'БББО-02-17', 'БББО-01-17'], start]
+		[[u'бббо-02-17', 'бббо-01-17'], start]
 		]
 		bot.run(query=queryset)
 	cur.close()
