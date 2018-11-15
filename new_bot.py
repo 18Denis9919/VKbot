@@ -276,7 +276,7 @@ def hello(message, vk):
 if __name__ == '__main__':
 	bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')	
 	while True:
-		if datetime.datetime.now().strftime('%H:%M:%S')=='14:45:00' and datetime.datetime.now().weekday()!=6:
+		if datetime.datetime.now().strftime('%H:%M:%S')=='14:48:00' and datetime.datetime.now().weekday()!=6:
 			print('WORK!')
 			cur.execute(u"""SELECT vk_id, group_id FROM users WHERE notifications='yes'""")
 			for el in cur:
