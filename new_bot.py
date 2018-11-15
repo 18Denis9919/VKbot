@@ -236,15 +236,15 @@ def today_auto(vk_id, vk):
 def notifications(message, vk):	
 	if get_group(message.user_id)!=0:
 		# notification = 0
-		cur.execute(u"""SELECT notification, group_id FROM users WHERE vk_id='{0}'""".format(str(message.user_id)))
+		cur.execute(u"""SELECT notifications, group_id FROM users WHERE vk_id='{0}'""".format(str(message.user_id)))
 		for el in cur:
 			notification = el[0]
 		if notification=='no':
-			cur.execute(u"""UPDATE users SET notification='yes' WHERE vk_id='{0}'""".format(str(message.user_id)))
+			cur.execute(u"""UPDATE users SET notifications='yes' WHERE vk_id='{0}'""".format(str(message.user_id)))
 			conn.commit()
 			vk.messages.send(user_id=message.user_id, message=u'Теперь тебе будет приходить уведомление о парах в 6:45 с понедельника по субботу!\n Чтобы отключить уведомление напиши мне "уведомление".')
 		else:
-			cur.execute(u"""UPDATE users SET notification='no' WHERE vk_id='{0}'""".format(str(message.user_id)))
+			cur.execute(u"""UPDATE users SET notifications='no' WHERE vk_id='{0}'""".format(str(message.user_id)))
 			conn.commit()
 			vk.messages.send(user_id=message.user_id, message=u'Теперь тебе не будет приходить уведомление о парах утром! Чтобы включть уведомление напиши мне "уведомление"')
 	else:
@@ -277,7 +277,7 @@ if __name__ == '__main__':
 	bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')	
 	while True:
 		if datetime.datetime.now().strftime('%H:%M')=='18:15' and datetime.datetime.now().weekday()!=6:
-			cur.execute(u"""SELECT vk_id, group_id FROM users WHERE notification='yes'""")
+			cur.execute(u"""SELECT vk_id, group_id FROM users WHERE notifications='yes'""")
 			for el in cur:
 				today_auto(int(el[0]), bot.vk)
 		queryset = [
