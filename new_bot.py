@@ -34,7 +34,7 @@ def create_message(request, data):
 	mes = ''
 	for row in request:
 		if (str(get_week(data)) in row[4]) or ('кр.' in row[4]) or (not bool(re.search(r'\d', row[4]))):
-			mes = mes + str(row[0])+' пара ('+ str(row[1]) + ', ' + str(row[2]).replace('-', ':') + '-' + str(row[3])replace('-', ':') + '): \n' + str(row[4]) + ', ' + str(row[5])+'\n\n'
+			mes = mes + str(row[0])+' пара ('+ str(row[1]) + ', ' + str(row[2]).replace('-', ':') + '-' + str(row[3]).replace('-', ':') + '): \n' + str(row[4]) + ', ' + str(row[5])+'\n\n'
 	
 	if mes=='':
 		mes = 'Занятий нет.\n\n'
