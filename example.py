@@ -156,6 +156,12 @@ def today(message, vk):
 	mes_date = '(' + str(datetime.datetime.today().day) + '.' + str(datetime.datetime.today().month) + ')'
 	vk.messages.send(user_id=message.user_id, message=get_weekday(datetime.datetime.today(), mes_date, message.user_id))
 
+def today_auto(vk_id, vk):
+	mes_auto = 'Привет хочу напомнить пары на сегодня:\n\n'
+	mes_auto_info = 'Чтобы отключить уведомления, напиши мне "уведомления".'
+	mes_date = '(' + str(datetime.datetime.today().day) + '.' + str(datetime.datetime.today().month) + ')'
+	vk.messages.send(user_id=vk_id, message=mes_auto+get_weekday(datetime.datetime.today(), mes_date, vk_id)+mes_auto_info)
+
 def tomorow(message, vk):
 	date = datetime.datetime.today()+datetime.timedelta(days=1)
 	mes_date = '(' + str(date.day) + '.' + str(date.month) + ')'
@@ -226,6 +232,23 @@ def delete_user(message, vk):
 	else:
 		vk.messages.send(user_id=message.user_id, message=u'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\nБББО-01-17 \nБББО-02-17')
 
+def notifications(message, vk):	
+	if get_group(message.user_id)!=0:
+		# notification = 0
+		cur.execute(u"""SELECT notification, group_id FROM users WHERE vk_id='{0}'""".format(str(message.user_id)))
+		for el in cur:
+			notification = el[0]
+		if notification=='no':
+			cur.execute(u"""UPDATE users SET notification='yes' WHERE vk_id='{0}'""".format(str(message.user_id)))
+			conn.commit()
+			vk.messages.send(user_id=message.user_id, message=u'Теперь тебе будет приходить уведомление о парах в 6:45 с понедельника по субботу!\n Чтобы отключить уведомление напиши мне "уведомление".')
+		else:
+			cur.execute(u"""UPDATE users SET notification='no' WHERE vk_id='{0}'""".format(str(message.user_id)))
+			conn.commit()
+			vk.messages.send(user_id=message.user_id, message=u'Теперь тебе не будет приходить уведомление о парах утром! Чтобы включть уведомление напиши мне "уведомление"')
+	else:
+		vk.messages.send(user_id=message.user_id, message=u'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\nБББО-01-17 \nБББО-02-17')
+
 
 
 def start(message, vk):
@@ -233,7 +256,7 @@ def start(message, vk):
 	group = message.text.upper()
 	if get_group(vk_id)==0:
 		try:
-			cur.execute(u"""INSERT INTO users (vk_id, group_id) VALUES ('{0}', '{1}') ON CONFLICT DO NOTHING""".format(str(vk_id), group))
+			cur.execute(u"""INSERT INTO users (vk_id, group_id, notification) VALUES ('{0}', '{1}', 'no') ON CONFLICT DO NOTHING""".format(str(vk_id), group))
 			conn.commit()
 			vk.messages.send(user_id=message.user_id, message=u'Я добавил тебя в базу, можешь приступать к работе!')
 			list_comand(message, vk)
@@ -253,6 +276,13 @@ def hello(message, vk):
 if __name__ == '__main__':
 	bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')	
 	while True:
+		# if datetime.datetime.now().strftime('%H:%M:%S')=='6:45:00':
+		if datetime.datetime.now().strftime('%H:%M')=='10:55' and datetime.datetime.now().weekday()!=6:
+			cur.execute(u"""SELECT vk_id FROM users WHERE notification='yes'""")
+			mes_date = ' '
+			for el in cur:
+				# if 'Занятий нет.' not in get_weekday(datetime.datetime.today(), mes_date, el[0]):
+				today_auto(int(el[0]), bot.vk)
 		queryset = [
 		[[u"Понедельник", "пн", "Пн","понедельник",], send_monday],
 		[[u"Вторник", "вт", "Вт","вторник",], send_tuesday],
@@ -264,6 +294,7 @@ if __name__ == '__main__':
 		[[u"Завтра", "завтра"], tomorow],
 		[[u"Неделю", "неделю"], for_week],
 		[[u"Сменить",], delete_user],
+		[[u"уведомление", "уведомления",], notifications],
 		[[u"Неделя", "неделя", "нед"], week],
 		[[u"преподы",], teachers],
 		[[u"info","Инфо","инфо","команды", "Комнады"], list_comand],

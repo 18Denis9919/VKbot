@@ -226,6 +226,31 @@ def delete_user(message, vk):
 
 
 
+def today_auto(vk_id, vk):
+	mes_auto = 'Привет хочу напомнить пары на сегодня:\n\n'
+	mes_auto_info = 'Чтобы отключить уведомления, напиши мне "уведомления".'
+	mes_date = '(' + str(datetime.datetime.today().day) + '.' + str(datetime.datetime.today().month) + ')'
+	vk.messages.send(user_id=vk_id, message=mes_auto+get_weekday(datetime.datetime.today(), mes_date, vk_id)+mes_auto_info)
+
+
+def notifications(message, vk):	
+	if get_group(message.user_id)!=0:
+		# notification = 0
+		cur.execute(u"""SELECT notification, group_id FROM users WHERE vk_id='{0}'""".format(str(message.user_id)))
+		for el in cur:
+			notification = el[0]
+		if notification=='no':
+			cur.execute(u"""UPDATE users SET notification='yes' WHERE vk_id='{0}'""".format(str(message.user_id)))
+			conn.commit()
+			vk.messages.send(user_id=message.user_id, message=u'Теперь тебе будет приходить уведомление о парах в 6:45 с понедельника по субботу!\n Чтобы отключить уведомление напиши мне "уведомление".')
+		else:
+			cur.execute(u"""UPDATE users SET notification='no' WHERE vk_id='{0}'""".format(str(message.user_id)))
+			conn.commit()
+			vk.messages.send(user_id=message.user_id, message=u'Теперь тебе не будет приходить уведомление о парах утром! Чтобы включть уведомление напиши мне "уведомление"')
+	else:
+		vk.messages.send(user_id=message.user_id, message=u'Тебя нет в базе, введи свою группу!\n Группы, которые поддреживает бот:\nБББО-01-17 \nБББО-02-17')
+
+
 def start(message, vk):
 	vk_id = message.user_id
 	group = message.text.upper()
@@ -251,6 +276,10 @@ def hello(message, vk):
 if __name__ == '__main__':
 	bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')	
 	while True:
+		if datetime.datetime.now().strftime('%H:%M')=='18:15' and datetime.datetime.now().weekday()!=6:
+			cur.execute(u"""SELECT vk_id, group_id FROM users WHERE notification='yes'""")
+			for el in cur:
+				today_auto(int(el[0]), bot.vk)
 		queryset = [
 		[[u"пн", "понедельник",], send_monday],
 		[[u"вт", "вторник",], send_tuesday],
@@ -263,7 +292,7 @@ if __name__ == '__main__':
 		[[u"неделю",], for_week],
 		[[u"сменить",], delete_user],
 		[[u"неделя", "нед"], week],
-		[[u"преподы",], teachers],
+		[[u"преподы", "преподавтаели"], teachers],
 		[[u"info","инфо","команды"] , list_comand],
 		[[u''], on_date],
 		[[u'Привет',], hello],
