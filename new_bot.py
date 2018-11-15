@@ -277,11 +277,11 @@ if __name__ == '__main__':
 	bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')	
 	print(datetime.datetime.now().strftime('%H:%M:%S'))
 	while True:
-		if datetime.datetime.now().strftime('%H:%M:%S')=='14:54:00' and datetime.datetime.now().weekday()!=6:
-			print('WORK!')
-			cur.execute(u"""SELECT vk_id, group_id FROM users WHERE notifications='yes'""")
-			for el in cur:
-				today_auto(int(el[0]), bot.vk)
+		# if datetime.datetime.now().strftime('%H:%M:%S')=='14:54:00' and datetime.datetime.now().weekday()!=6:
+		# 	print('WORK!')
+		# 	cur.execute(u"""SELECT vk_id, group_id FROM users WHERE notifications='yes'""")
+		# 	for el in cur:
+		# 		today_auto(int(el[0]), bot.vk)
 		queryset = [
 		[[u"пн", "понедельник",], send_monday],
 		[[u"вт", "вторник",], send_tuesday],
