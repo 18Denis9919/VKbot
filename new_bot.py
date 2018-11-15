@@ -256,7 +256,7 @@ def start(message, vk):
 	group = message.text.upper()
 	if get_group(vk_id)==0:
 		try:
-			cur.execute(u"""INSERT INTO users (vk_id, group_id) VALUES ('{0}', '{1}') ON CONFLICT DO NOTHING""".format(str(vk_id), group))
+			cur.execute(u"""INSERT INTO users (vk_id, group_id, notifications) VALUES ('{0}', '{1}', 'no') ON CONFLICT DO NOTHING""".format(str(vk_id), group))
 			conn.commit()
 			vk.messages.send(user_id=message.user_id, message=u'Я добавил тебя в базу, можешь приступать к работе!')
 			list_comand(message, vk)
