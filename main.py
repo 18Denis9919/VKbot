@@ -61,13 +61,13 @@ def create_message(col, row, data):
 		type_lesson = sheet.cell(row, col+1).value
 		if type(class_lesson) is not str:
 			if class_lesson.is_integer():
-				class_lesson = int(class_lesson)
+				class_lesson = str(int)(class_lesson)
 		if get_week(data)%2!=0:
 			if lesson!='' and row%2!=0 and ((str(get_week(data)) in lesson) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))):
-				mes = mes + str(int(sheet.cell(row, 1).value)) + ' пара ('+ class_lesson +', ' + sheet.cell(row, 2).value.replace('-', ':')+'-'+sheet.cell(row, 3).value.replace('-', ':')+'): \n'+ lesson+', '+type_lesson+'\n\n'
+				mes = mes + str(int(sheet.cell(row, 1).value)) + ' пара ('+ str(class_lesson) +', ' + sheet.cell(row, 2).value.replace('-', ':')+'-'+sheet.cell(row, 3).value.replace('-', ':')+'): \n'+ lesson+', '+type_lesson+'\n\n'
 		else:
 			if sheet.cell(row, col).value!='' and row%2==0 and ((str(get_week(data)) in sheet.cell(row, col).value) or ('кр.' in sheet.cell(row, col).value) or (not bool(re.search(r'\d', sheet.cell(row, col).value)))):
-				mes = mes + str(int(sheet.cell(row-1, 1).value)) + ' пара ('+ class_lesson +', ' + sheet.cell(row-1, 2).value.replace('-', ':')+'-'+sheet.cell(row-1, 3).value.replace('-', ':')+'): \n'+ lesson+', '+type_lesson+'\n\n'
+				mes = mes + str(int(sheet.cell(row-1, 1).value)) + ' пара ('+ str(class_lesson) +', ' + sheet.cell(row-1, 2).value.replace('-', ':')+'-'+sheet.cell(row-1, 3).value.replace('-', ':')+'): \n'+ lesson+', '+type_lesson+'\n\n'
 		row+=1
 	if mes=='':
 		mes = 'Занятий нет.\n\n'	
