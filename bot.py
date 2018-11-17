@@ -100,15 +100,14 @@ class VKBot:
         :param commands: list of command. For example ["command1", "command2", ...]
         :param handler: function, that should run if message contain a command
         """
-        if handler.__name__=='today_auto':
-            cur.execute(u"""SELECT vk_id, group_id FROM users WHERE notifications='yes'""")
-            for el in cur:
-                handler(int(el[0]), self.vk)
         message_set = self.event.text.split(u' ')
         for command in commands:           
             for message in message_set:
                 if handler.__name__=='on_date' and self.get_data_from_message(message_set)!=False:
                     handler(self.event, self.vk, self.get_data_from_message(message_set))
+                    return 1 
+                if handler.__name__=='start' and bool(re.search(r'[А-Яа-я]{4}-\d{2}-\d{2}', message)):
+                    handler(self.event, self.vk)
                     return 1 
                 distance = len(message)
                 d = self.damerau_levenshtein_distance(message.lower(), command)
@@ -121,8 +120,6 @@ class VKBot:
             if distance < len(message)*0.4 and message.lower() not in ["неделя", "нед"] and handler.__name__!='start':
                 handler(self.event, self.vk)
                 return 1
-            # if handler.__name__=='test':
-            #         return 1
 
     def __query_manager__(self, queryset):
         """
@@ -139,10 +136,9 @@ class VKBot:
         Main bot`s cycle.
         :param query: list of commands and hanlers. For example [["command", handler], ...]
         """
-        # if datetime.datetime.now().strftime('%H:%M:%S')=='18:36:00' and datetime.datetime.now().weekday()!=6:
-        #     print('yes')
-
         for event in self.long_poll.listen():
+            if datetime.datetime.now().strftime('%H:%M:%S')=='03:45:00' and datetime.datetime.now().weekday()!=6:
+                break
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
                 self.event = event
                 if (self.__query_manager__(query))==1:
@@ -150,9 +146,5 @@ class VKBot:
                 else:
                     self.unknow_message(self.event, self.vk)
 
-    # def get_user_id(self):
-    #     for event in self.long_poll.listen():
-    #         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-    #             return event.user_id
                 
 
