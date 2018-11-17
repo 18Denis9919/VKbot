@@ -59,7 +59,7 @@ def create_message(col, row, data):
 		lesson = sheet.cell(row, col).value
 		class_lesson = sheet.cell(row, col+3).value
 		type_lesson = sheet.cell(row, col+1).value
-		if class_lesson not is str:
+		if type(class_lesson) is not str:
 			if class_lesson.is_integer():
 				class_lesson = int(class_lesson)
 		if get_week(data)%2!=0:
