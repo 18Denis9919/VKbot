@@ -100,6 +100,10 @@ class VKBot:
         :param commands: list of command. For example ["command1", "command2", ...]
         :param handler: function, that should run if message contain a command
         """
+        if handler.__name__=='today_auto':
+            cur.execute(u"""SELECT vk_id, group_id FROM users WHERE notifications='yes'""")
+            for el in cur:
+                handler(int(el[0]), self.vk)
         message_set = self.event.text.split(u' ')
         for command in commands:           
             for message in message_set:
@@ -135,12 +139,8 @@ class VKBot:
         Main bot`s cycle.
         :param query: list of commands and hanlers. For example [["command", handler], ...]
         """
-        # if datetime.datetime.now().strftime('%H:%M:%S')=='14:54:00' and datetime.datetime.now().weekday()!=6:
-        #     self.__query_manager__(['cегодня', self.vk])
-        #     print('WORK!')
-        #     cur.execute(u"""SELECT vk_id, group_id FROM users WHERE notifications='yes'""")
-        #     for el in cur:
-        #         today_auto(int(el[0]), bot.vk)
+        # if datetime.datetime.now().strftime('%H:%M:%S')=='18:36:00' and datetime.datetime.now().weekday()!=6:
+        #     print('yes')
 
         for event in self.long_poll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
