@@ -57,8 +57,11 @@ def create_message(col, row, data):
 	mes = ''
 	for el in range(12):
 		lesson = sheet.cell(row, col).value
-		class_lesson = str(sheet.cell(row, col+3).value)
+		class_lesson = sheet.cell(row, col+3).value
 		type_lesson = sheet.cell(row, col+1).value
+		if class_lesson not is str:
+			if class_lesson.is_integer():
+				class_lesson = int(class_lesson)
 		if get_week(data)%2!=0:
 			if lesson!='' and row%2!=0 and ((str(get_week(data)) in lesson) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))):
 				mes = mes + str(int(sheet.cell(row, 1).value)) + ' пара ('+ class_lesson +', ' + sheet.cell(row, 2).value.replace('-', ':')+'-'+sheet.cell(row, 3).value.replace('-', ':')+'): \n'+ lesson+', '+type_lesson+'\n\n'
