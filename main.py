@@ -11,6 +11,7 @@ import psycopg2.extensions
 from xlrd import open_workbook
 import requests
 import urllib
+import json
 
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
@@ -31,6 +32,30 @@ row_thursday = 39
 row_friday = 51
 row_saturday = 63
 
+def get_button(label, color, payload=""):
+        return {
+            "action": {
+                "type": "text",
+                "payload": json.dumps(payload),
+                "label": label
+            },
+            "color": color
+        }
+
+keyboard = {
+	"one_time": False,
+    "buttons": [
+    [get_button(label="Сегодня", color="positive"), get_button(label="Завтра", color="positive")],
+    [get_button(label="На неделю", color="primary")],
+    [get_button(label="Преподаватели", color="default"), get_button(label="Номер недели", color="default")],
+    ]
+}
+
+keyboard = json.dumps(keyboard, ensure_ascii=False).encode('utf-8')
+keyboard = str(keyboard.decode('utf-8'))
+keyboard_delete = {"buttons":[],"one_time":True}
+keyboard_delete = json.dumps(keyboard_delete, ensure_ascii=False).encode('utf-8')
+keyboard_delete = str(keyboard_delete.decode('utf-8'))
 
 def get_group(vk_id):
 	req = cur.execute("""SELECT * FROM users WHERE vk_id = '{0}'""".format(str(vk_id)))
@@ -123,22 +148,22 @@ def saturday(data, vk_id, mes_date=''):
 	return message
 
 def send_monday(message, vk):
-	vk.messages.send(user_id=message.user_id, message= monday(datetime.datetime.utcnow(), message.user_id))
+	vk.messages.send(user_id=message.user_id, message= monday(datetime.datetime.utcnow(), message.user_id), keyboard = keyboard)
 
 def send_tuesday(message, vk):
-	vk.messages.send(user_id=message.user_id, message=tuesday(datetime.datetime.utcnow(), message.user_id))
+	vk.messages.send(user_id=message.user_id, message=tuesday(datetime.datetime.utcnow(), message.user_id), keyboard = keyboard)
 
 def send_wednesday(message, vk):
-	vk.messages.send(user_id=message.user_id, message= wednesday(datetime.datetime.utcnow(), message.user_id))
+	vk.messages.send(user_id=message.user_id, message= wednesday(datetime.datetime.utcnow(), message.user_id), keyboard = keyboard)
 
 def send_thursday(message, vk):
-	vk.messages.send(user_id=message.user_id, message= thursday(datetime.datetime.utcnow(), message.user_id))
+	vk.messages.send(user_id=message.user_id, message= thursday(datetime.datetime.utcnow(), message.user_id), keyboard = keyboard)
 
 def send_friday(message, vk):
-	vk.messages.send(user_id=message.user_id, message= friday(datetime.datetime.utcnow(), message.user_id))
+	vk.messages.send(user_id=message.user_id, message= friday(datetime.datetime.utcnow(), message.user_id), keyboard = keyboard)
 
 def send_saturday(message, vk):
-	vk.messages.send(user_id=message.user_id, message= saturday(datetime.datetime.utcnow(), message.user_id))
+	vk.messages.send(user_id=message.user_id, message= saturday(datetime.datetime.utcnow(), message.user_id), keyboard = keyboard)
 
 
 def get_weekday(day, mes_date, vk_id):
@@ -160,16 +185,16 @@ def get_weekday(day, mes_date, vk_id):
 
 def on_date(message, vk, date):
 	mes_date = '(' + str(date.day) + '.' + str(date.month) + ')'
-	vk.messages.send(user_id=message.user_id, message=get_weekday(date, mes_date,message.user_id))
+	vk.messages.send(user_id=message.user_id, message=get_weekday(date, mes_date,message.user_id), keyboard = keyboard)
 
 def today(message, vk):
 	mes_date = '(' + str(datetime.datetime.today().day) + '.' + str(datetime.datetime.today().month) + ')'
-	vk.messages.send(user_id=message.user_id, message=get_weekday(datetime.datetime.today(), mes_date, message.user_id))
+	vk.messages.send(user_id=message.user_id, message=get_weekday(datetime.datetime.today(), mes_date, message.user_id), keyboard = keyboard)
 
 def tomorow(message, vk):
 	date = datetime.datetime.today()+datetime.timedelta(days=1)
 	mes_date = '(' + str(date.day) + '.' + str(date.month) + ')'
-	vk.messages.send(user_id=message.user_id, message=get_weekday(date, mes_date, message.user_id))
+	vk.messages.send(user_id=message.user_id, message=get_weekday(date, mes_date, message.user_id), keyboard = keyboard)
 
 def for_week(message, vk):
 	if get_group(message.user_id)!=0:
@@ -182,7 +207,7 @@ def for_week(message, vk):
 			data = data + datetime.timedelta(days=1) 
 	else:
 		mes_date = 'Тебя нет в базе, введи свою группу!'
-	vk.messages.send(user_id=message.user_id, message=mes_week)
+	vk.messages.send(user_id=message.user_id, message=mes_week, keyboard = keyboard)
 
 
 def week(message, vk):
@@ -190,7 +215,7 @@ def week(message, vk):
 		num_week = str(get_week(datetime.datetime.utcnow()))
 	else:
 		num_week = 'Тебя нет в базе, введи свою группу!'
-	vk.messages.send(user_id=message.user_id, message='Сейчас ' + num_week + ' неделя.')
+	vk.messages.send(user_id=message.user_id, message='Сейчас ' + num_week + ' неделя.', keyboard = keyboard)
 
 def teachers(message, vk):
 	colidx = get_colidx_group(message.user_id)
@@ -204,14 +229,14 @@ def teachers(message, vk):
 			row+=1
 	else:
 		teacher_list = 'Тебя нет в базе, введи свою группу!'
-	vk.messages.send(user_id=message.user_id, message=teacher_list)
+	vk.messages.send(user_id=message.user_id, message=teacher_list, keyboard = keyboard)
 
 
 
 def list_comand(message, vk):
 	if get_group(message.user_id)!=0:
 		list_message = '''Бот понимает такие команды:\n
-			\t• "понедельник" или "пн" - расписание на понедельник
+			• "понедельник" или "пн" - расписание на понедельник
 			• "вторник" или "вт" - расписание на вторник
 			• "среда" или "ср" - расписание на среду
 			• "четверг" или "чт" - расписание на четверг
@@ -231,7 +256,7 @@ def list_comand(message, vk):
 		'''
 	else:
 		list_message = 'Тебя нет в базе, введи свою группу!'
-	vk.messages.send(user_id=message.user_id, message=list_message)
+	vk.messages.send(user_id=message.user_id, message=list_message, keyboard = keyboard)
 
 def delete_user(message, vk):
 	if get_group(message.user_id)!=0:
@@ -239,7 +264,7 @@ def delete_user(message, vk):
 		try:
 			cur.execute("""DELETE FROM users WHERE vk_id = '{0}'""".format(str(message.user_id)))
 			conn.commit()
-			vk.messages.send(user_id=message.user_id, message=u'Смена группы произошла успешно!')
+			vk.messages.send(user_id=message.user_id, message=u'Смена группы произошла успешно!', keyboard = keyboard_delete)
 			hello(message, vk)
 		except:	
 			conn.rollback()
@@ -289,7 +314,7 @@ def start(message, vk):
 			try:
 				cur.execute(u"""INSERT INTO users (vk_id, group_id, notifications, colidx) VALUES ('{0}', '{1}', 'no', {2}) ON CONFLICT DO NOTHING""".format(str(vk_id), group, col_group))
 				conn.commit()
-				vk.messages.send(user_id=message.user_id, message=u'Я добавил тебя в базу, можешь приступать к работе!')
+				vk.messages.send(user_id=message.user_id, message=u'Я добавил тебя в базу, можешь приступать к работе!', keyboard = keyboard)
 				list_comand(message, vk)
 			except:	
 				conn.rollback()
@@ -303,7 +328,7 @@ def hello(message, vk):
 	if get_group(message.user_id)==0:
 		vk.messages.send(user_id=message.user_id, message=u'Тебя нет в базе, введи свою группу! ')
 	else:
-		vk.messages.send(user_id=message.user_id, message=u'Ну привет, чувак из {0}'.format(get_group(message.user_id)))
+		vk.messages.send(user_id=message.user_id, message=u'Ну привет, чувак из {0}'.format(get_group(message.user_id)), keyboard=keyboard)
 
 
 if __name__ == '__main__':
