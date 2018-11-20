@@ -62,18 +62,19 @@ def get_group(vk_id):
 		group = el[2]
 	return group
 
-def get_colidx_group(vk_id):
-	req = cur.execute("""SELECT vk_id, colidx FROM users WHERE vk_id = '{0}'""".format(str(vk_id)))
+def get_colidx_and_link(vk_id):
+	req = cur.execute("""SELECT colidx, link FROM users WHERE vk_id = '{0}'""".format(str(vk_id)))
 	col_group = 0
 	for el in cur:
-		col_group = el[1]
+		col_group = el[0]
+		link = el[1]
 	return col_group
 
-def get_link_group(vk_id):
-	req = cur.execute("""SELECT vk_id, link FROM users WHERE vk_id = '{0}'""".format(str(vk_id)))
-	for el in cur:
-		link = el[1]
-	return link
+# def get_link_group(vk_id):
+# 	req = cur.execute("""SELECT vk_id, link FROM users WHERE vk_id = '{0}'""".format(str(vk_id)))
+# 	for el in cur:
+# 		link = el[1]
+# 	return link
 
 def get_week(data):
 	time = data.isocalendar()[1]
@@ -118,49 +119,61 @@ def create_message(col, row, data, link):
 
 
 def monday(data, vk_id, mes_date=''):
-	colidx = get_colidx_group(vk_id)
+	colidx_and_link = get_colidx_and_link(vk_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
 	if colidx!=0:
-		message = 'Пары на понедельник ' + mes_date + ':\n\n' + create_message(colidx, row_monday, data, get_link_group(vk_id))
+		message = 'Пары на понедельник ' + mes_date + ':\n\n' + create_message(colidx, row_monday, data, link)
 	else:
 		message = 'Тебя нет в базе, введи свою группу!'	
 	return message
 
 def tuesday(data, vk_id, mes_date=''):
-	colidx = get_colidx_group(vk_id)
+	colidx_and_link = get_colidx_and_link(vk_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
 	if colidx!=0:
-		message = 'Пары на вторник ' + mes_date + ':\n\n' + create_message(colidx, row_tuesday, data, get_link_group(vk_id))
+		message = 'Пары на вторник ' + mes_date + ':\n\n' + create_message(colidx, row_tuesday, data, link)
 	else:
 		message = 'Тебя нет в базе, введи свою группу!'	
 	return message
 
 def wednesday(data, vk_id, mes_date=''):
-	colidx = get_colidx_group(vk_id)
+	colidx_and_link = get_colidx_and_link(vk_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
 	if colidx!=0:
-		message = 'Пары на среда ' + mes_date + ':\n\n' + create_message(colidx, row_wednesday, data, get_link_group(vk_id))
+		message = 'Пары на среда ' + mes_date + ':\n\n' + create_message(colidx, row_wednesday, data, link)
 	else:
 		message = 'Тебя нет в базе, введи свою группу!'	
 	return message	
 
 def thursday(data, vk_id, mes_date=''):
-	colidx = get_colidx_group(vk_id)
+	colidx_and_link = get_colidx_and_link(vk_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
 	if colidx!=0:
-		message = 'Пары на четверг ' + mes_date + ':\n\n' + create_message(colidx, row_thursday, data, get_link_group(vk_id))
+		message = 'Пары на четверг ' + mes_date + ':\n\n' + create_message(colidx, row_thursday, data, link)
 	else:
 		message = 'Тебя нет в базе, введи свою группу!'	
 	return message
 
 def friday(data, vk_id, mes_date=''):
-	colidx = get_colidx_group(vk_id)
+	colidx_and_link = get_colidx_and_link(vk_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
 	if colidx!=0:
-		message = 'Пары на пятницу ' + mes_date + ':\n\n' + create_message(colidx, row_friday, data, get_link_group(vk_id))
+		message = 'Пары на пятницу ' + mes_date + ':\n\n' + create_message(colidx, row_friday, data, link)
 	else:
 		message = 'Тебя нет в базе, введи свою группу!'	
 	return message
 
 def saturday(data, vk_id, mes_date=''):
-	colidx = get_colidx_group(vk_id)
+	colidx_and_link = get_colidx_and_link(vk_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
 	if colidx!=0:
-		message = 'Пары на субботу ' + mes_date + ':\n\n' + create_message(colidx, row_saturday, data, get_link_group(vk_id))
+		message = 'Пары на субботу ' + mes_date + ':\n\n' + create_message(colidx, row_saturday, data, link)
 	else:
 		message = 'Тебя нет в базе, введи свою группу!'	
 	return message
@@ -237,9 +250,10 @@ def week(message, vk):
 	vk.messages.send(user_id=message.user_id, message='Сейчас ' + num_week + ' неделя.')
 
 def teachers(message, vk):
-	colidx = get_colidx_group(message.user_id)
+	colidx_and_link = get_colidx_and_link(vk_id)
+	colidx = colidx_and_link[0]
 	if colidx!=0:
-		link = get_link_group(message.user_id)
+		link = colidx_and_link[1]
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
 		sheet = book.sheet_by_index(0)
