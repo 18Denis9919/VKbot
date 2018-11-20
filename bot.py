@@ -137,8 +137,6 @@ class VKBot:
         :param query: list of commands and hanlers. For example [["command", handler], ...]
         """
         for event in self.long_poll.listen():
-            if datetime.datetime.now().strftime('%H:%M:%S')=='03:45:00' and datetime.datetime.now().weekday()!=6:
-                break
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
                 self.event = event
                 if (self.__query_manager__(query))==1:
