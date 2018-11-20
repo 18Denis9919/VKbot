@@ -423,7 +423,7 @@ def hello(message, vk):
 
 
 if __name__ == '__main__':
-	bot = VKBot(token='6f04094bb3fc8a9e4b5d12ed61759a1f233556fdeaff68752d9c49dbd5dfe2e366f0c6f763f96da01a04f')	
+	bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')	
 	while True:
 		if datetime.datetime.now().strftime('%H:%M:%S')=='03:45:00' and datetime.datetime.now().weekday()!=6:
 			print('WORK!')
