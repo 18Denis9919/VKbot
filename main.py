@@ -51,6 +51,10 @@ keyboard_delete = {"buttons":[],"one_time":True}
 keyboard_delete = json.dumps(keyboard_delete, ensure_ascii=False).encode('utf-8')
 keyboard_delete = str(keyboard_delete.decode('utf-8'))
 
+start_lesson = {'1':'9:00', '2':'10:40', '3':'13:00', '4':'14:40', '5':'16:20', '6':'18:00'}
+end_lesson = {'1':'10:30', '2':'12:10', '3':'14:30', '4':'16:10', '5':'17:50', '6':'19:30'}
+
+
 def get_group(vk_id):
 	req = cur.execute("""SELECT * FROM users WHERE vk_id = '{0}'""".format(str(vk_id)))
 	group = 0
@@ -100,29 +104,13 @@ def create_message(col, row, data, link):
 				class_lesson = int(class_lesson)
 
 		if number_week%2!=0:
-			if type(sheet.cell(row, 2).value) is not float and type(sheet.cell(row, 3).value) is not float:
-				start_lesson = sheet.cell(row, 2).value.replace('-', ':')
-				end_lesson =sheet.cell(row, 3).value.replace('-', ':')
-			else:
-				start_lesson = xlrd.xldate_as_tuple(sheet.cell(row, 2).value, book.datemode)
-				start_lesson = str(datetime.time(*start_lesson[3:]))[:5]
-				end_lesson = xlrd.xldate_as_tuple(sheet.cell(row, 3).value, book.datemode)
-				end_lesson = str(datetime.time(*end_lesson[3:]))[:5]
-
 			if lesson!='' and row%2!=0 and number_in_lesson:
-				mes = mes + str(int(sheet.cell(row, 1).value)) + ' пара ('+ str(class_lesson) +', ' + start_lesson +'-' + end_lesson+'): \n'+ lesson+', '+type_lesson+'\n\n'
+				num_lesson = str(int(sheet.cell(row, 1).value))
+				mes = mes + num_lesson + ' пара ('+ str(class_lesson) +', ' + start_lesson[num_lesson] +'-' + end_lesson[num_lesson]+'): \n'+ lesson+', '+type_lesson+'\n\n'
 		else:
-			if type(sheet.cell(row-1, 2).value) is not float and type(sheet.cell(row-1, 3).value) is not float:
-				start_lesson = sheet.cell(row-1, 2).value.replace('-', ':')
-				end_lesson = sheet.cell(row-1, 3).value.replace('-', ':')
-			else:
-				start_lesson = xlrd.xldate_as_tuple(sheet.cell(row-1, 2).value, book.datemode)
-				start_lesson = str(datetime.time(*start_lesson[3:]))[:5]
-				end_lesson = xlrd.xldate_as_tuple(sheet.cell(row-1, 3).value, book.datemode)
-				end_lesson = str(datetime.time(*end_lesson[3:]))[:5]
-
-			if sheet.cell(row, col).value!='' and row%2==0 and number_in_lesson:
-				mes = mes + str(int(sheet.cell(row-1, 1).value)) + ' пара ('+ str(class_lesson) +', ' + start_lesson+'-'+end_lesson+'): \n'+ lesson+', '+type_lesson+'\n\n'
+			if lesson!='' and row%2==0 and number_in_lesson:
+				num_lesson = str(int(sheet.cell(row-1, 1).value))
+				mes = mes + num_lesson + ' пара ('+ str(class_lesson) +', ' + start_lesson[num_lesson]+'-'+end_lesson[num_lesson]+'): \n'+ lesson+', '+type_lesson+'\n\n'
 		row+=1
 	if mes=='':
 		mes = 'Занятий нет.\n\n'	
