@@ -1,11 +1,7 @@
 ## -*- coding: utf-8 -*-
 from bot import VKBot
-from random import randint
-from importlib import reload
-import pymysql
 import datetime
 import re
-import postgresql
 import psycopg2
 import psycopg2.extensions
 from xlrd import open_workbook
@@ -13,12 +9,12 @@ import xlrd
 import requests
 import urllib
 import json
-import time
 
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 conn = psycopg2.connect("host='ec2-50-19-127-158.compute-1.amazonaws.com' dbname='da3vvps6qv9fpc' user='cgbvbzntdxveul' password='f5fdf70c6d5fe8fed9dc9e0ff1430ea6e99f18ef27896797401db2f6b5f7f47e'")
 cur = conn.cursor()
+
 
 row_monday = 3
 row_tuesday = 15
@@ -54,6 +50,8 @@ keyboard_delete = str(keyboard_delete.decode('utf-8'))
 
 start_lesson = {'1':'9:00', '2':'10:40', '3':'13:00', '4':'14:40', '5':'16:20', '6':'18:00'}
 end_lesson = {'1':'10:30', '2':'12:10', '3':'14:30', '4':'16:10', '5':'17:50', '6':'19:30'}
+weekday = {0:3, 1:15, 2:27, 3:39, 4:51, 5:63}
+weekday_name = {0:'Понедельник', 1:'Вторник', 2:'Среда', 3:'Четверг', 4:'Пятница', 5:'Суббота'}
 
 
 def get_group(vk_id):
@@ -78,12 +76,7 @@ def get_week(data):
 	week = time - time1
 	return week
 
-
-def create_message(col, row, data, link):
-	file_name, headers = urllib.request.urlretrieve(link)
-	book = open_workbook(file_name)
-	sheet = book.sheet_by_index(0)
-	number_week = get_week(data)
+def create_message(sheet, col, row, number_week):
 	mes = ''
 	for el in range(12):
 		lesson = sheet.cell(row, col).value
@@ -95,7 +88,6 @@ def create_message(col, row, data, link):
 			number_in_lesson = (str(number_week) in lesson) or number_week in range(int(space_weeks[0]), int(space_weeks[1])) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))
 		else:
 			number_in_lesson = (str(number_week) in lesson) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))
-
 		if type(class_lesson) is not str:
 			if class_lesson.is_integer():
 				class_lesson = int(class_lesson)
@@ -114,132 +106,174 @@ def create_message(col, row, data, link):
 	return mes
 
 
-def monday(data, vk_id, mes_date=''):
-	colidx_and_link = get_colidx_and_link(vk_id)
-	colidx = colidx_and_link[0]
-	link = colidx_and_link[1]
-	if colidx!=0:
-		message = 'Пары на понедельник ' + mes_date + ':\n\n' + create_message(colidx, row_monday, data, link)
-	else:
-		message = 'Тебя нет в базе, введи свою группу!'	
-	return message
-
-def tuesday(data, vk_id, mes_date=''):
-	colidx_and_link = get_colidx_and_link(vk_id)
-	colidx = colidx_and_link[0]
-	link = colidx_and_link[1]
-	if colidx!=0:
-		message = 'Пары на вторник ' + mes_date + ':\n\n' + create_message(colidx, row_tuesday, data, link)
-	else:
-		message = 'Тебя нет в базе, введи свою группу!'	
-	return message
-
-def wednesday(data, vk_id, mes_date=''):
-	colidx_and_link = get_colidx_and_link(vk_id)
-	colidx = colidx_and_link[0]
-	link = colidx_and_link[1]
-	if colidx!=0:
-		message = 'Пары на среда ' + mes_date + ':\n\n' + create_message(colidx, row_wednesday, data, link)
-	else:
-		message = 'Тебя нет в базе, введи свою группу!'	
-	return message	
-
-def thursday(data, vk_id, mes_date=''):
-	colidx_and_link = get_colidx_and_link(vk_id)
-	colidx = colidx_and_link[0]
-	link = colidx_and_link[1]
-	if colidx!=0:
-		message = 'Пары на четверг ' + mes_date + ':\n\n' + create_message(colidx, row_thursday, data, link)
-	else:
-		message = 'Тебя нет в базе, введи свою группу!'	
-	return message
-
-def friday(data, vk_id, mes_date=''):
-	colidx_and_link = get_colidx_and_link(vk_id)
-	colidx = colidx_and_link[0]
-	link = colidx_and_link[1]
-	if colidx!=0:
-		message = 'Пары на пятницу ' + mes_date + ':\n\n' + create_message(colidx, row_friday, data, link)
-	else:
-		message = 'Тебя нет в базе, введи свою группу!'	
-	return message
-
-def saturday(data, vk_id, mes_date=''):
-	colidx_and_link = get_colidx_and_link(vk_id)
-	colidx = colidx_and_link[0]
-	link = colidx_and_link[1]
-	if colidx!=0:
-		message = 'Пары на субботу ' + mes_date + ':\n\n' + create_message(colidx, row_saturday, data, link)
-	else:
-		message = 'Тебя нет в базе, введи свою группу!'	
-	return message
-
 def send_monday(message, vk):
-	start_time = time.time()
-	vk.messages.send(user_id=message.user_id, message= monday(datetime.datetime.utcnow()+datetime.timedelta(hours=3), message.user_id))
-	print("--- %s seconds ---" % (time.time() - start_time))
+	colidx_and_link = get_colidx_and_link(message.user_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
+	if colidx!=0:
+		file_name, headers = urllib.request.urlretrieve(link)
+		book = open_workbook(file_name)
+		sheet = book.sheet_by_index(0)
+		date = datetime.datetime.utcnow()+datetime.timedelta(hours=3)
+		number_week = get_week(date)
+		day = date.weekday()
+		vk.messages.send(user_id=message.user_id, message='Пары на понедельник:\n\n'+create_message(sheet, colidx, row_monday, number_week))
+	else:
+		vk.messages.send(user_id=message.user_id, message= 'Тебя нет в базе, введи свою группу!' )	
 
 def send_tuesday(message, vk):
-	vk.messages.send(user_id=message.user_id, message=tuesday(datetime.datetime.utcnow()+datetime.timedelta(hours=3), message.user_id))
+	colidx_and_link = get_colidx_and_link(message.user_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
+	if colidx!=0:
+		file_name, headers = urllib.request.urlretrieve(link)
+		book = open_workbook(file_name)
+		sheet = book.sheet_by_index(0)
+		date = datetime.datetime.utcnow()+datetime.timedelta(hours=3)
+		number_week = get_week(date)
+		day = date.weekday()
+		vk.messages.send(user_id=message.user_id, message='Пары на вторник:\n\n'+ create_message(sheet, colidx, row_tuesday, number_week))
+	else:
+		vk.messages.send(user_id=message.user_id, message= 'Тебя нет в базе, введи свою группу!' )
 
 def send_wednesday(message, vk):
-	vk.messages.send(user_id=message.user_id, message= wednesday(datetime.datetime.utcnow()+datetime.timedelta(hours=3), message.user_id))
+	colidx_and_link = get_colidx_and_link(message.user_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
+	if colidx!=0:
+		file_name, headers = urllib.request.urlretrieve(link)
+		book = open_workbook(file_name)
+		sheet = book.sheet_by_index(0)
+		date = datetime.datetime.utcnow()+datetime.timedelta(hours=3)
+		number_week = get_week(date)
+		day = date.weekday()
+		vk.messages.send(user_id=message.user_id, message='Пары на среду:\n\n'+ create_message(sheet, colidx, row_wednesday, number_week))
+	else:
+		vk.messages.send(user_id=message.user_id, message= 'Тебя нет в базе, введи свою группу!' )
 
 def send_thursday(message, vk):
-	vk.messages.send(user_id=message.user_id, message= thursday(datetime.datetime.utcnow()+datetime.timedelta(hours=3), message.user_id))
+	colidx_and_link = get_colidx_and_link(message.user_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
+	if colidx!=0:
+		file_name, headers = urllib.request.urlretrieve(link)
+		book = open_workbook(file_name)
+		sheet = book.sheet_by_index(0)
+		date = datetime.datetime.utcnow()+datetime.timedelta(hours=3)
+		number_week = get_week(date)
+		day = date.weekday()
+		vk.messages.send(user_id=message.user_id, message='Пары на четверг:\n\n'+ create_message(sheet, colidx, row_thursday, number_week))
+	else:
+		vk.messages.send(user_id=message.user_id, message= 'Тебя нет в базе, введи свою группу!' )
 
 def send_friday(message, vk):
-	vk.messages.send(user_id=message.user_id, message= friday(datetime.datetime.utcnow()+datetime.timedelta(hours=3), message.user_id))
+	colidx_and_link = get_colidx_and_link(message.user_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
+	if colidx!=0:
+		file_name, headers = urllib.request.urlretrieve(link)
+		book = open_workbook(file_name)
+		sheet = book.sheet_by_index(0)
+		date = datetime.datetime.utcnow()+datetime.timedelta(hours=3)
+		number_week = get_week(date)
+		day = date.weekday()
+		vk.messages.send(user_id=message.user_id, message='Пары на пятницу:\n\n'+ create_message(sheet, colidx, row_friday, number_week))
+	else:
+		vk.messages.send(user_id=message.user_id, message= 'Тебя нет в базе, введи свою группу!' )
 
 def send_saturday(message, vk):
-	vk.messages.send(user_id=message.user_id, message= saturday(datetime.datetime.utcnow()+datetime.timedelta(hours=3), message.user_id))
-
-
-def get_weekday(day, mes_date, vk_id):
-	if day.weekday()==0:
-		return monday(day, vk_id, mes_date)
-	elif day.weekday()==1:
-		return tuesday(day, vk_id, mes_date)
-	elif day.weekday()==2:
-		return wednesday(day, vk_id, mes_date)
-	elif day.weekday()==3:
-		return thursday(day, vk_id, mes_date)
-	elif day.weekday()==4:
-		return friday(day, vk_id, mes_date)
-	elif day.weekday()==5:
-		return saturday(day, vk_id, mes_date)
+	colidx_and_link = get_colidx_and_link(message.user_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
+	if colidx!=0:
+		file_name, headers = urllib.request.urlretrieve(link)
+		book = open_workbook(file_name)
+		sheet = book.sheet_by_index(0)
+		date = datetime.datetime.utcnow()+datetime.timedelta(hours=3)
+		number_week = get_week(date)
+		day = date.weekday()
+		vk.messages.send(user_id=message.user_id, message='Пары на субботу:\n\n'+ create_message(sheet, colidx, row_saturday, number_week))
 	else:
-		mes_sun = 'В воскресенье выходной день!'
-		return mes_sun
+		vk.messages.send(user_id=message.user_id, message= 'Тебя нет в базе, введи свою группу!' )
 
 def on_date(message, vk, date):
-	mes_date = '(' + str(date.day) + '.' + str(date.month) + ')'
-	vk.messages.send(user_id=message.user_id, message=get_weekday(date, mes_date,message.user_id))
+	colidx_and_link = get_colidx_and_link(message.user_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
+	if colidx!=0:
+		mes_date = '(' + str(date.day) + '.' + str(date.month) + ')'
+		file_name, headers = urllib.request.urlretrieve(link)
+		book = open_workbook(file_name)
+		sheet = book.sheet_by_index(0)
+		number_week = get_week(date)
+		day = date.weekday()
+		if day!=6:
+			vk.messages.send(user_id=message.user_id, message='Пары на '+mes_date+': \n\n'+create_message(sheet, colidx, weekday[day], number_week))
+
+		else:
+			vk.messages.send(user_id=message.user_id, message= 'В воскресенье выходной день!' )
+	else:
+		vk.messages.send(user_id=message.user_id, message= 'Тебя нет в базе, введи свою группу!' )
+	
 
 def today(message, vk):
-	date = datetime.datetime.today()+datetime.timedelta(hours=3)
-	mes_date = '(' + str(date.day) + '.' + str(date.month) + ')'
-	vk.messages.send(user_id=message.user_id, message=get_weekday(date, mes_date, message.user_id))
+	colidx_and_link = get_colidx_and_link(message.user_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
+	if colidx!=0:
+		date = datetime.datetime.today()+datetime.timedelta(hours=3)
+		file_name, headers = urllib.request.urlretrieve(link)
+		book = open_workbook(file_name)
+		sheet = book.sheet_by_index(0)
+		number_week = get_week(date)
+		day = date.weekday()
+		if day!=6:
+			vk.messages.send(user_id=message.user_id, message='Пары на сегодня:\n\n'+create_message(sheet, colidx, weekday[day], number_week))
+
+		else:
+			vk.messages.send(user_id=message.user_id, message= 'В воскресенье выходной день!' )
+	else:
+		vk.messages.send(user_id=message.user_id, message= 'Тебя нет в базе, введи свою группу!' )
 
 def tomorow(message, vk):
-	date = datetime.datetime.today()+datetime.timedelta(hours=3)+datetime.timedelta(days=1)
-	mes_date = '(' + str(date.day) + '.' + str(date.month) + ')'
-	vk.messages.send(user_id=message.user_id, message=get_weekday(date, mes_date, message.user_id))
+	colidx_and_link = get_colidx_and_link(message.user_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
+	if colidx!=0:
+		date = datetime.datetime.today()+datetime.timedelta(hours=3)+datetime.timedelta(days=1)
+		file_name, headers = urllib.request.urlretrieve(link)
+		book = open_workbook(file_name)
+		sheet = book.sheet_by_index(0)
+		number_week = get_week(date)
+		day = date.weekday()
+		if day!=6:
+			vk.messages.send(user_id=message.user_id, message='Пары на завтра:\n\n'+create_message(sheet, colidx, weekday[day], number_week))
+
+		else:
+			vk.messages.send(user_id=message.user_id, message= 'В воскресенье выходной день!' )
+	else:
+		vk.messages.send(user_id=message.user_id, message= 'Тебя нет в базе, введи свою группу!' )
 
 def for_week(message, vk):
-	start_time = time.time()
-	if get_group(message.user_id)!=0:
-		data = datetime.datetime.today()+datetime.timedelta(hours=3)
+	colidx_and_link = get_colidx_and_link(message.user_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
+	if colidx!=0:
+		date = datetime.datetime.today()+datetime.timedelta(hours=3)
+		file_name, headers = urllib.request.urlretrieve(link)
+		book = open_workbook(file_name)
+		sheet = book.sheet_by_index(0)
 		mes_week = 'Пары на неделю:\n_________________________\n\n'
 		for i in range(7):
-			mes_date = '(' + str(data.day) + '.' + str(data.month) + ')'
-			if data.weekday()!=6:
-				mes_week += get_weekday(data, mes_date, message.user_id)  + '_________________________\n\n'
-			data = data + datetime.timedelta(days=1) 
+			day = date.weekday()
+			number_week = get_week(date)
+			mes_date = '(' + str(date.day) + '.' + str(date.month) + ')'
+			if day!=6:
+				mes_week +=weekday_name[day]+mes_date+'\n\n'+ create_message(sheet, colidx, weekday[day], number_week) + '_________________________\n\n'
+			date = date + datetime.timedelta(days=1) 
+		vk.messages.send(user_id=message.user_id, message='На неделю:\n\n'+mes_week)
 	else:
-		mes_date = 'Тебя нет в базе, введи свою группу!'
-	vk.messages.send(user_id=message.user_id, message=mes_week)
-	print("--- %s seconds ---" % (time.time() - start_time))
+		vk.messages.send(user_id=message.user_id, message= 'Тебя нет в базе, введи свою группу!' )
 
 
 def week(message, vk):
@@ -250,7 +284,7 @@ def week(message, vk):
 	vk.messages.send(user_id=message.user_id, message='Сейчас ' + num_week + ' неделя.')
 
 def teachers(message, vk):
-	colidx_and_link = get_colidx_and_link(vk_id)
+	colidx_and_link = get_colidx_and_link(message.user_id)
 	colidx = colidx_and_link[0]
 	if colidx!=0:
 		link = colidx_and_link[1]
@@ -267,7 +301,6 @@ def teachers(message, vk):
 	else:
 		teacher_list = 'Тебя нет в базе, введи свою группу!'
 	vk.messages.send(user_id=message.user_id, message=teacher_list)
-
 
 
 def list_comand(message, vk):
@@ -425,7 +458,7 @@ def hello(message, vk):
 
 
 if __name__ == '__main__':
-	bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')	
+	bot = VKBot(token='6f04094bb3fc8a9e4b5d12ed61759a1f233556fdeaff68752d9c49dbd5dfe2e366f0c6f763f96da01a04f')	
 	while True:
 		queryset = [
 		[[u"пн", "понедельник",], send_monday],
