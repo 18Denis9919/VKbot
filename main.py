@@ -63,16 +63,16 @@ def get_group(vk_id):
 	return group
 
 def get_colidx_group(vk_id):
-	req = cur.execute("""SELECT * FROM users WHERE vk_id = '{0}'""".format(str(vk_id)))
+	req = cur.execute("""SELECT vk_id, colidx FROM users WHERE vk_id = '{0}'""".format(str(vk_id)))
 	col_group = 0
 	for el in cur:
-		col_group = el[4]
+		col_group = el[1]
 	return col_group
 
 def get_link_group(vk_id):
-	req = cur.execute("""SELECT * FROM users WHERE vk_id = '{0}'""".format(str(vk_id)))
+	req = cur.execute("""SELECT vk_id, link FROM users WHERE vk_id = '{0}'""".format(str(vk_id)))
 	for el in cur:
-		link = el[5]
+		link = el[1]
 	return link
 
 def get_week(data):
