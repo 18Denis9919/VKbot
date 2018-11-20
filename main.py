@@ -183,7 +183,7 @@ def send_wednesday(message, vk):
 	vk.messages.send(user_id=message.user_id, message= wednesday(datetime.datetime.utcnow()+datetime.timedelta(hours=3), message.user_id))
 
 def send_thursday(message, vk):
-	vk.messages.send(user_id=message.user_id, message= thursday(datetime.datetime.utcnow(), message.user_id))
+	vk.messages.send(user_id=message.user_id, message= thursday(datetime.datetime.utcnow()+datetime.timedelta(hours=3), message.user_id))
 
 def send_friday(message, vk):
 	vk.messages.send(user_id=message.user_id, message= friday(datetime.datetime.utcnow()+datetime.timedelta(hours=3), message.user_id))
