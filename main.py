@@ -68,7 +68,7 @@ def get_colidx_and_link(vk_id):
 	for el in cur:
 		col_group = el[0]
 		link = el[1]
-	return col_group
+	return col_group, link
 
 # def get_link_group(vk_id):
 # 	req = cur.execute("""SELECT vk_id, link FROM users WHERE vk_id = '{0}'""".format(str(vk_id)))
