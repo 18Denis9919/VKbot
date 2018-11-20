@@ -13,6 +13,7 @@ import xlrd
 import requests
 import urllib
 import json
+import time
 
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
@@ -174,7 +175,9 @@ def saturday(data, vk_id, mes_date=''):
 	return message
 
 def send_monday(message, vk):
+	start_time = time.time()
 	vk.messages.send(user_id=message.user_id, message= monday(datetime.datetime.utcnow()+datetime.timedelta(hours=3), message.user_id))
+	print("--- %s seconds ---" % (time.time() - start_time))
 
 def send_tuesday(message, vk):
 	vk.messages.send(user_id=message.user_id, message=tuesday(datetime.datetime.utcnow()+datetime.timedelta(hours=3), message.user_id))
@@ -224,6 +227,7 @@ def tomorow(message, vk):
 	vk.messages.send(user_id=message.user_id, message=get_weekday(date, mes_date, message.user_id))
 
 def for_week(message, vk):
+	start_time = time.time()
 	if get_group(message.user_id)!=0:
 		data = datetime.datetime.today()+datetime.timedelta(hours=3)
 		mes_week = 'Пары на неделю:\n_________________________\n\n'
@@ -235,6 +239,7 @@ def for_week(message, vk):
 	else:
 		mes_date = 'Тебя нет в базе, введи свою группу!'
 	vk.messages.send(user_id=message.user_id, message=mes_week)
+	print("--- %s seconds ---" % (time.time() - start_time))
 
 
 def week(message, vk):
