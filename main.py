@@ -263,15 +263,15 @@ def for_week(message, vk):
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
 		sheet = book.sheet_by_index(0)
-		mes_week = 'Пары на неделю:\n_________________________\n\n'
+		mes_week = 'Пары на неделю:\n_________________________\n'
 		for i in range(7):
 			day = date.weekday()
 			number_week = get_week(date)
 			mes_date = '(' + str(date.day) + '.' + str(date.month) + ')'
 			if day!=6:
-				mes_week +=weekday_name[day]+mes_date+'\n\n'+ create_message(sheet, colidx, weekday[day], number_week) + '_________________________\n\n'
+				mes_week +=weekday_name[day]+' '+mes_date+':'+'\n\n'+ create_message(sheet, colidx, weekday[day], number_week) + '_________________________\n'
 			date = date + datetime.timedelta(days=1) 
-		vk.messages.send(user_id=message.user_id, message='На неделю:\n\n'+mes_week)
+		vk.messages.send(user_id=message.user_id, message=mes_week)
 	else:
 		vk.messages.send(user_id=message.user_id, message= 'Тебя нет в базе, введи свою группу!' )
 
