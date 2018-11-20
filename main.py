@@ -88,12 +88,12 @@ def create_message(col, row, data, link):
 		lesson = sheet.cell(row, col).value
 		class_lesson = sheet.cell(row, col+3).value
 		type_lesson = sheet.cell(row, col+1).value
-		# match = re.search(r'\d*-\d*', lesson)
-		# if bool(match):
-		# 	space_weeks = match.group().split('-')		
-		# 	number_in_lesson = (str(number_week) in lesson) or number_week in range(int(space_weeks[0]), int(space_weeks[1])) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))
-		# else:
-		number_in_lesson = (str(number_week) in lesson) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))
+		match = re.search(r'\d*-\d*', lesson)
+		if bool(match):
+			space_weeks = match.group().split('-')		
+			number_in_lesson = (str(number_week) in lesson) or number_week in range(int(space_weeks[0]), int(space_weeks[1])) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))
+		else:
+			number_in_lesson = (str(number_week) in lesson) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))
 
 		if type(class_lesson) is not str:
 			if class_lesson.is_integer():
@@ -183,7 +183,7 @@ def send_wednesday(message, vk):
 	vk.messages.send(user_id=message.user_id, message= wednesday(datetime.datetime.utcnow()+datetime.timedelta(hours=3), message.user_id))
 
 def send_thursday(message, vk):
-	vk.messages.send(user_id=message.user_id, message= thursday(datetime.datetime.utcnow()+datetime.timedelta(hours=3), message.user_id))
+	vk.messages.send(user_id=message.user_id, message= thursday(datetime.datetime.utcnow(), message.user_id))
 
 def send_friday(message, vk):
 	vk.messages.send(user_id=message.user_id, message= friday(datetime.datetime.utcnow()+datetime.timedelta(hours=3), message.user_id))
