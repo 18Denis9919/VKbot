@@ -70,11 +70,6 @@ def get_colidx_and_link(vk_id):
 		link = el[1]
 	return col_group, link
 
-# def get_link_group(vk_id):
-# 	req = cur.execute("""SELECT vk_id, link FROM users WHERE vk_id = '{0}'""".format(str(vk_id)))
-# 	for el in cur:
-# 		link = el[1]
-# 	return link
 
 def get_week(data):
 	time = data.isocalendar()[1]
@@ -93,12 +88,12 @@ def create_message(col, row, data, link):
 		lesson = sheet.cell(row, col).value
 		class_lesson = sheet.cell(row, col+3).value
 		type_lesson = sheet.cell(row, col+1).value
-		match = re.search(r'\d*-\d*', lesson)
-		if bool(match):
-			space_weeks = match.group().split('-')		
-			number_in_lesson = (str(number_week) in lesson) or number_week in range(int(space_weeks[0]), int(space_weeks[1])) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))
-		else:
-			number_in_lesson = (str(number_week) in lesson) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))
+		# match = re.search(r'\d*-\d*', lesson)
+		# if bool(match):
+		# 	space_weeks = match.group().split('-')		
+		# 	number_in_lesson = (str(number_week) in lesson) or number_week in range(int(space_weeks[0]), int(space_weeks[1])) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))
+		# else:
+		number_in_lesson = (str(number_week) in lesson) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))
 
 		if type(class_lesson) is not str:
 			if class_lesson.is_integer():
