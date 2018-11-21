@@ -116,7 +116,7 @@ def send_monday(message, vk):
 	colidx_and_link = get_colidx_and_link(message.user_id)
 	colidx = colidx_and_link[0]
 	link = colidx_and_link[1]
-	if get_group(message.user_id)!=0
+	if get_group(message.user_id)!=0:
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
 		sheet = book.sheet_by_index(0)
@@ -131,7 +131,7 @@ def send_tuesday(message, vk):
 	colidx_and_link = get_colidx_and_link(message.user_id)
 	colidx = colidx_and_link[0]
 	link = colidx_and_link[1]
-	if get_group(message.user_id)!=0
+	if get_group(message.user_id)!=0:
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
 		sheet = book.sheet_by_index(0)
@@ -146,7 +146,7 @@ def send_wednesday(message, vk):
 	colidx_and_link = get_colidx_and_link(message.user_id)
 	colidx = colidx_and_link[0]
 	link = colidx_and_link[1]
-	if get_group(message.user_id)!=0
+	if get_group(message.user_id)!=0:
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
 		sheet = book.sheet_by_index(0)
@@ -161,7 +161,7 @@ def send_thursday(message, vk):
 	colidx_and_link = get_colidx_and_link(message.user_id)
 	colidx = colidx_and_link[0]
 	link = colidx_and_link[1]
-	if get_group(message.user_id)!=0
+	if get_group(message.user_id)!=0:
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
 		sheet = book.sheet_by_index(0)
@@ -176,7 +176,7 @@ def send_friday(message, vk):
 	colidx_and_link = get_colidx_and_link(message.user_id)
 	colidx = colidx_and_link[0]
 	link = colidx_and_link[1]
-	if get_group(message.user_id)!=0
+	if get_group(message.user_id)!=0:
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
 		sheet = book.sheet_by_index(0)
@@ -191,7 +191,7 @@ def send_saturday(message, vk):
 	colidx_and_link = get_colidx_and_link(message.user_id)
 	colidx = colidx_and_link[0]
 	link = colidx_and_link[1]
-	if get_group(message.user_id)!=0
+	if get_group(message.user_id)!=0:
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
 		sheet = book.sheet_by_index(0)
@@ -206,7 +206,7 @@ def on_date(message, vk, date):
 	colidx_and_link = get_colidx_and_link(message.user_id)
 	colidx = colidx_and_link[0]
 	link = colidx_and_link[1]
-	if get_group(message.user_id)!=0
+	if get_group(message.user_id)!=0:
 		mes_date = str(date.day) + '.' + str(date.month)
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
@@ -226,7 +226,7 @@ def yesterday(message, vk):
 	colidx_and_link = get_colidx_and_link(message.user_id)
 	colidx = colidx_and_link[0]
 	link = colidx_and_link[1]
-	if get_group(message.user_id)!=0
+	if get_group(message.user_id)!=0:
 		date = datetime.datetime.today()+datetime.timedelta(hours=3)-datetime.timedelta(days=1)
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
@@ -245,7 +245,7 @@ def today(message, vk):
 	colidx_and_link = get_colidx_and_link(message.user_id)
 	colidx = colidx_and_link[0]
 	link = colidx_and_link[1]
-	if get_group(message.user_id)!=0
+	if get_group(message.user_id)!=0:
 		date = datetime.datetime.today()+datetime.timedelta(hours=3)
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
@@ -265,7 +265,7 @@ def tomorow(message, vk):
 	colidx_and_link = get_colidx_and_link(message.user_id)
 	colidx = colidx_and_link[0]
 	link = colidx_and_link[1]
-	if get_group(message.user_id)!=0
+	if get_group(message.user_id)!=0:
 		date = datetime.datetime.today()+datetime.timedelta(hours=3)+datetime.timedelta(days=1)
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
@@ -285,7 +285,7 @@ def after_tomorow(message, vk):
 	colidx_and_link = get_colidx_and_link(message.user_id)
 	colidx = colidx_and_link[0]
 	link = colidx_and_link[1]
-	if get_group(message.user_id)!=0
+	if get_group(message.user_id)!=0:
 		date = datetime.datetime.today()+datetime.timedelta(hours=3)+datetime.timedelta(days=2)
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
@@ -305,7 +305,7 @@ def for_week(message, vk):
 	colidx_and_link = get_colidx_and_link(message.user_id)
 	colidx = colidx_and_link[0]
 	link = colidx_and_link[1]
-	if get_group(message.user_id)!=0
+	if get_group(message.user_id)!=0:
 		date = datetime.datetime.today()+datetime.timedelta(hours=3)
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
