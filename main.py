@@ -94,11 +94,17 @@ def create_message(sheet, col, row, number_week):
 
 		if number_week%2!=0:
 			if lesson!='' and row%2!=0 and number_in_lesson:
-				num_lesson = str(int(sheet.cell(row, 1).value))
+				if type(sheet.cell(row, 1).value) is float:
+					num_lesson = str(int(sheet.cell(row, 1).value))
+				else:
+					num_lesson = '1'
 				mes = mes + num_lesson + ' пара ('+ str(class_lesson) +', ' + start_lesson[num_lesson] +'-' + end_lesson[num_lesson]+'): \n'+ lesson+', '+type_lesson+'\n\n'
 		else:
 			if lesson!='' and row%2==0 and number_in_lesson:
-				num_lesson = str(int(sheet.cell(row-1, 1).value))
+				if type(sheet.cell(row-1, 1).value) is float:
+					num_lesson = str(int(sheet.cell(row-1, 1).value))
+				else:
+					num_lesson = '1'
 				mes = mes + num_lesson + ' пара ('+ str(class_lesson) +', ' + start_lesson[num_lesson]+'-'+end_lesson[num_lesson]+'): \n'+ lesson+', '+type_lesson+'\n\n'
 		row+=1
 	if mes=='':
