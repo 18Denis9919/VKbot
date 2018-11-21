@@ -226,9 +226,10 @@ def yesterday(message, vk):
 		book = open_workbook(file_name)
 		sheet = book.sheet_by_index(0)
 		number_week = get_week(date)
+		mes_date = ' (' + str(date.day) + '.' + str(date.month) + '):\n\n'
 		day = date.weekday()
 		if day!=6:
-			vk.messages.send(user_id=message.user_id, message='Пары вчера:\n\n'+weekday_name[day]+':\n'+create_message(sheet, colidx, weekday[day], number_week))
+			vk.messages.send(user_id=message.user_id, message='Пары вчера:\n\n'+weekday_name[day]+mes_date+create_message(sheet, colidx, weekday[day], number_week))
 
 		else:
 			vk.messages.send(user_id=message.user_id, message= 'В воскресенье выходной день!' )
@@ -244,9 +245,10 @@ def today(message, vk):
 		book = open_workbook(file_name)
 		sheet = book.sheet_by_index(0)
 		number_week = get_week(date)
+		mes_date = ' (' + str(date.day) + '.' + str(date.month) + ') n\n'
 		day = date.weekday()
 		if day!=6:
-			vk.messages.send(user_id=message.user_id, message='Пары на сегодня:\n\n'+create_message(sheet, colidx, weekday[day], number_week))
+			vk.messages.send(user_id=message.user_id, message='Пары на сегодня:\n\n'+weekday_name[day]+mes_date+create_message(sheet, colidx, weekday[day], number_week))
 
 		else:
 			vk.messages.send(user_id=message.user_id, message= 'В воскресенье выходной день!' )
@@ -263,9 +265,10 @@ def tomorow(message, vk):
 		book = open_workbook(file_name)
 		sheet = book.sheet_by_index(0)
 		number_week = get_week(date)
+		mes_date = ' (' + str(date.day) + '.' + str(date.month) + '):\n\n'
 		day = date.weekday()
 		if day!=6:
-			vk.messages.send(user_id=message.user_id, message='Пары на завтра:\n\n'+create_message(sheet, colidx, weekday[day], number_week))
+			vk.messages.send(user_id=message.user_id, message='Пары на завтра:\n\n'+weekday_name[day]+mes_date+create_message(sheet, colidx, weekday[day], number_week))
 
 		else:
 			vk.messages.send(user_id=message.user_id, message= 'В воскресенье выходной день!' )
@@ -282,9 +285,10 @@ def after_tomorow(message, vk):
 		book = open_workbook(file_name)
 		sheet = book.sheet_by_index(0)
 		number_week = get_week(date)
+		mes_date = ' (' + str(date.day) + '.' + str(date.month) + '):\n\n'
 		day = date.weekday()
 		if day!=6:
-			vk.messages.send(user_id=message.user_id, message='Пары на послезавтра:\n\n'+create_message(sheet, colidx, weekday[day], number_week))
+			vk.messages.send(user_id=message.user_id, message='Пары на послезавтра:\n\n'+weekday_name[day]+mes_date+create_message(sheet, colidx, weekday[day], number_week))
 
 		else:
 			vk.messages.send(user_id=message.user_id, message= 'В воскресенье выходной день!' )
@@ -304,9 +308,9 @@ def for_week(message, vk):
 		for i in range(7):
 			day = date.weekday()
 			number_week = get_week(date)
-			mes_date = '(' + str(date.day) + '.' + str(date.month) + ')'
+			mes_date = ' (' + str(date.day) + '.' + str(date.month) + '):\n\n'
 			if day!=6:
-				mes_week +=weekday_name[day]+' '+mes_date+':'+'\n\n'+ create_message(sheet, colidx, weekday[day], number_week) + '_________________________\n'
+				mes_week +=weekday_name[day]+mes_date+ create_message(sheet, colidx, weekday[day], number_week) + '_________________________\n'
 			date = date + datetime.timedelta(days=1) 
 		vk.messages.send(user_id=message.user_id, message=mes_week)
 	else:
