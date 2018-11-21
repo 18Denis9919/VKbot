@@ -139,10 +139,9 @@ class VKBot:
         for event in self.long_poll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
                 self.event = event
-                if (self.__query_manager__(query))==1:
-                    break
-                else:
+                if (self.__query_manager__(query))!=1:
                     self.unknow_message(self.event, self.vk)
+                    
 
                 
 

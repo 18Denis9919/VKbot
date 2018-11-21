@@ -502,29 +502,28 @@ def hello(message, vk):
 
 if __name__ == '__main__':
 	bot = VKBot(token='ad2782d4222562577747d80a4e616f6e8f9d566dfe73ca2e67656b3e2537e57c770fbce7bcc61073d86b5')	
-	while True:
-		queryset = [
-		[[u"пн", "понедельник",], send_monday],
-		[[u"вт", "вторник",], send_tuesday],
-		[[u"ср", "среда", "среду",], send_wednesday],
-		[[u"чт", "четверг",], send_thursday],
-		[[u"пт", "пятницу", "пятница",], send_friday],
-		[[u"суб", "суббота", "субботу", "сб",], send_saturday],
-		[[u"сегодня",], today],
-		[[u"вчера",], yesterday],
-		[[u"завтра",], tomorow],
-		[[u"послезавтра",], after_tomorow],
-		[[u"неделю",], for_week],
-		[[u"сменить",], delete_user],
-		[[u"неделя", "нед", "недели"], week],
-		[[u"преподы", "преподаватели"], teachers],
-		[[u"уведомление", "уведомления",], notifications],
-		[[u"info","инфо","команды"] , list_comand],
-		[[u'Привет',], hello],
-		[[u''], on_date],
-		[[u''], start]
-		]
-		bot.run(query=queryset)
+	queryset = [
+	[[u"пн", "понедельник",], send_monday],
+	[[u"вт", "вторник",], send_tuesday],
+	[[u"ср", "среда", "среду",], send_wednesday],
+	[[u"чт", "четверг",], send_thursday],
+	[[u"пт", "пятницу", "пятница",], send_friday],
+	[[u"суб", "суббота", "субботу", "сб",], send_saturday],
+	[[u"сегодня",], today],
+	[[u"вчера",], yesterday],
+	[[u"завтра",], tomorow],
+	[[u"послезавтра",], after_tomorow],
+	[[u"неделю",], for_week],
+	[[u"сменить",], delete_user],
+	[[u"неделя", "нед", "недели"], week],
+	[[u"преподы", "преподаватели"], teachers],
+	[[u"уведомление", "уведомления",], notifications],
+	[[u"info","инфо","команды"] , list_comand],
+	[[u'Привет',], hello],
+	[[u''], on_date],
+	[[u''], start]
+	]
+	bot.run(query=queryset)
 	cur.close()
 	conn.close()
 
