@@ -85,8 +85,9 @@ def create_message(sheet, col, row, number_week):
 		type_lesson = sheet.cell(row, col+1).value
 		match = re.search(r'\d*-\d*', lesson)
 		if bool(match):
-			space_weeks = match.group().split('-')		
-			number_in_lesson = (str(number_week) in lesson) or number_week in range(int(space_weeks[0]), int(space_weeks[1])) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))
+			space_weeks = match.group().split('-')
+			if space_weeks[0]!='' and space_weeks[1]!='':
+				number_in_lesson = (str(number_week) in lesson) or number_week in range(int(space_weeks[0]), int(space_weeks[1])) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))
 		else:
 			number_in_lesson = (str(number_week) in lesson) or ('кр.' in lesson) or (not bool(re.search(r'\d', lesson)))
 		if type(class_lesson) is not str:
