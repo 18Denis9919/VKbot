@@ -214,7 +214,25 @@ def on_date(message, vk, date):
 			vk.messages.send(user_id=message.user_id, message= 'В воскресенье выходной день!' )
 	else:
 		vk.messages.send(user_id=message.user_id, message= 'Тебя нет в базе, введи свою группу!' )
+
 	
+def yesterday(message, vk):
+	colidx_and_link = get_colidx_and_link(message.user_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
+	if colidx!=0:
+		date = datetime.datetime.today()+datetime.timedelta(hours=3)-datetime.timedelta(days=1)
+		file_name, headers = urllib.request.urlretrieve(link)
+		book = open_workbook(file_name)
+		sheet = book.sheet_by_index(0)
+		number_week = get_week(date)
+		day = date.weekday()
+		if day!=6:
+			vk.messages.send(user_id=message.user_id, message='Пары вчера:\n\n'+create_message(sheet, colidx, weekday[day], number_week))
+
+		else:
+			vk.messages.send(user_id=message.user_id, message= 'В воскресенье выходной день!' )
+
 
 def today(message, vk):
 	colidx_and_link = get_colidx_and_link(message.user_id)
@@ -248,6 +266,25 @@ def tomorow(message, vk):
 		day = date.weekday()
 		if day!=6:
 			vk.messages.send(user_id=message.user_id, message='Пары на завтра:\n\n'+create_message(sheet, colidx, weekday[day], number_week))
+
+		else:
+			vk.messages.send(user_id=message.user_id, message= 'В воскресенье выходной день!' )
+	else:
+		vk.messages.send(user_id=message.user_id, message= 'Тебя нет в базе, введи свою группу!' )
+
+def after_tomorow(message, vk):
+	colidx_and_link = get_colidx_and_link(message.user_id)
+	colidx = colidx_and_link[0]
+	link = colidx_and_link[1]
+	if colidx!=0:
+		date = datetime.datetime.today()+datetime.timedelta(hours=3)+datetime.timedelta(days=2)
+		file_name, headers = urllib.request.urlretrieve(link)
+		book = open_workbook(file_name)
+		sheet = book.sheet_by_index(0)
+		number_week = get_week(date)
+		day = date.weekday()
+		if day!=6:
+			vk.messages.send(user_id=message.user_id, message='Пары на послезавтра:\n\n'+create_message(sheet, colidx, weekday[day], number_week))
 
 		else:
 			vk.messages.send(user_id=message.user_id, message= 'В воскресенье выходной день!' )
@@ -312,8 +349,10 @@ def list_comand(message, vk):
 			• "четверг" или "чт" - расписание на четверг
 			• "пятница" или "пт" - расписание на пятницу
 			• "суббота" или "суб" - расписание на субботу
-			• "сегодня" - расписание на сегодня 
+			• "сегодня" - расписание на сегодня
+			• "вчера" - расписание на вчерашний день
 			• "завтра" - расписание на завтра
+			• "послезавтра" - расписание на послезавтра
 			• "на неделю" - расписание на всю неделю
 			• "дд.мм" или "день месяц" - расписание на определенную дату (образец: "12.11" или "12 ноября")
 			• "неделя" - номер недели
@@ -468,7 +507,9 @@ if __name__ == '__main__':
 		[[u"пт", "пятницу", "пятница",], send_friday],
 		[[u"суб", "суббота", "субботу", "сб",], send_saturday],
 		[[u"сегодня",], today],
+		[[u"вчера",], yesterday],
 		[[u"завтра",], tomorow],
+		[[u"послезавтра",], after_tomorow],
 		[[u"неделю",], for_week],
 		[[u"сменить",], delete_user],
 		[[u"неделя", "нед", "недели"], week],
