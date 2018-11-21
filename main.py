@@ -245,7 +245,7 @@ def today(message, vk):
 		book = open_workbook(file_name)
 		sheet = book.sheet_by_index(0)
 		number_week = get_week(date)
-		mes_date = ' (' + str(date.day) + '.' + str(date.month) + ') n\n'
+		mes_date = ' (' + str(date.day) + '.' + str(date.month) + ') \n\n'
 		day = date.weekday()
 		if day!=6:
 			vk.messages.send(user_id=message.user_id, message='Пары на сегодня:\n\n'+weekday_name[day]+mes_date+create_message(sheet, colidx, weekday[day], number_week))
