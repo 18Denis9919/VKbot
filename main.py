@@ -207,7 +207,7 @@ def on_date(message, vk, date):
 	colidx = colidx_and_link[0]
 	link = colidx_and_link[1]
 	if colidx!=0:
-		mes_date = '(' + str(date.day) + '.' + str(date.month) + ')'
+		mes_date = str(date.day) + '.' + str(date.month)
 		file_name, headers = urllib.request.urlretrieve(link)
 		book = open_workbook(file_name)
 		sheet = book.sheet_by_index(0)
