@@ -228,7 +228,7 @@ def yesterday(message, vk):
 		number_week = get_week(date)
 		day = date.weekday()
 		if day!=6:
-			vk.messages.send(user_id=message.user_id, message='Пары вчера:\n\n'+create_message(sheet, colidx, weekday[day], number_week))
+			vk.messages.send(user_id=message.user_id, message='Пары вчера:\n\n'+weekday_name[day]+':\n'+create_message(sheet, colidx, weekday[day], number_week))
 
 		else:
 			vk.messages.send(user_id=message.user_id, message= 'В воскресенье выходной день!' )
